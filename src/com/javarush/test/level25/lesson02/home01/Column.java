@@ -51,15 +51,24 @@ public enum Column implements Columnable {
     public static List<Column> getVisibleColumns() {
         List<Column> result = new LinkedList<>();
 
-        Column[] columns = Column.values();
         for (int i = 0; i < realOrder.length; i++) {
-            if (columns[i].isShown()) {
-                result.add(null);
+            if (realOrder[i] == -1) {
+                continue;
             }
-        }
-        for (int i = 0; i < realOrder.length; i++) {
-            if (columns[i].isShown()) {
-                result.set(realOrder[i], columns[i]);
+            if (result.size() == 0) {
+                result.add(values()[i]);
+                continue;
+            }
+            for (int j = 0; j < result.size(); j++) {
+                if (realOrder[result.get(j).ordinal()] > realOrder[i]) {
+                    result.add(j, values()[i]);
+                    break;
+                } else {
+                    if (j == result.size() - 1) {
+                        result.add(values()[i]);
+                        break;
+                    }
+                }
             }
         }
 
@@ -82,15 +91,6 @@ public enum Column implements Columnable {
     @Override
     public void hide()
     {
-        int current = realOrder[this.ordinal()];
-        if (current != -1) {
-            realOrder[this.ordinal()] = -1;
-        }
-
-        for (int i = 0; i < realOrder.length; i++) {
-            if (realOrder[i] != -1 && realOrder[i] > current) {
-                realOrder[i]--;
-            }
-        }
+        realOrder[this.ordinal()] = -1;
     }
 }
