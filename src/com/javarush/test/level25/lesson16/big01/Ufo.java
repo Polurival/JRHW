@@ -6,9 +6,10 @@ package com.javarush.test.level25.lesson16.big01;
  */
 public class Ufo extends BaseObject
 {
-    private int x;
-    private int y;
-    private int size;
+    public Ufo(double x, double y, double radius)
+    {
+        super(x, y, radius);
+    }
 
     public void move() {
 
