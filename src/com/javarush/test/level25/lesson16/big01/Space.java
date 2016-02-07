@@ -61,6 +61,19 @@ public class Space
     }
 
 
+    public void sleep(int ms) {
+
+    }
+
+    public void draw() {
+
+    }
+
+    public void run() {
+
+    }
+
+
     public static void main(String[] args)
     {
 
