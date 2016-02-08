@@ -56,4 +56,21 @@ public class BaseObject
     {
         return isAlive;
     }
+
+
+    public void draw() {
+
+    }
+
+    public void move() {
+
+    }
+
+    public void die() {
+        isAlive = false;
+    }
+
+    public boolean isIntersec(BaseObject o) {
+        return (this.getRadius() + o.getRadius()) < (this.getRadius() > o.getRadius() ? this.getRadius() : o.getRadius());
+    }
 }

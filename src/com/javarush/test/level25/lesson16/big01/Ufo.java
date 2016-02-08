@@ -11,10 +11,12 @@ public class Ufo extends BaseObject
         super(x, y, radius);
     }
 
+    @Override
     public void move() {
 
     }
 
+    @Override
     public void draw() {
 
     }
