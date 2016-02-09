@@ -1,44 +1,71 @@
 package com.javarush.test.level25.lesson16.big01;
 
 /**
- * Created by Polurival
- * on 07.02.2016.
+ * Класс для космического корабля
  */
 public class SpaceShip extends BaseObject
 {
+    //картинка корабля для отрисовки
+    private static int[][] matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {1, 0, 1, 0, 1},
+            {1, 1, 1, 1, 1},
+    };
 
+    //вектор движения (-1 влево,+1 вправо)
     private double dx = 0;
 
-    public SpaceShip(int x, int y) {
+    public SpaceShip(int x, int y)
+    {
         super(x, y, 3);
     }
 
-    @Override
-    public void move() {
-
-        x += dx;
-        if (x - radius < 0 || x + radius > Space.game.getWidth() - 1) {
-
-        }
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-
-    }
-
-    public void moveLeft() {
+    /**
+     * Устанавливаем вектор движения влево
+     */
+    public void moveLeft()
+    {
         dx = -1;
     }
 
-    public void moveRight() {
+    /**
+     * Устанавливаем вектор движения вправо
+     */
+    public void moveRight()
+    {
         dx = 1;
     }
 
-    public void fire() {
-        Rocket rocket1 = new Rocket(x - radius + 1, y);
-        Rocket rocket2 = new Rocket(x + radius - 1, y);
-        Space.game.getRockets().add(rocket1);
-        Space.game.getRockets().add(rocket2);
+    /**
+     * Метод рисует свой объект на "канвасе".
+     */
+    @Override
+    public void draw(Canvas canvas)
+    {
+        canvas.drawMatrix(x - radius + 1, y, matrix, 'M');
+    }
+
+    /**
+     * Двигаем себя на один ход.
+     * Проверяем столкновение с границами.
+     */
+    @Override
+    public void move()
+    {
+        x = x + dx;
+
+        checkBorders(radius, Space.game.getWidth() - radius + 1, 1, Space.game.getHeight() + 1);
+    }
+
+    /**
+     * Стреляем.
+     * Создаем две ракеты: слева и справа от корабля.
+     */
+    public void fire()
+    {
+        Space.game.getRockets().add(new Rocket(x - 2, y));
+        Space.game.getRockets().add(new Rocket(x + 2, y));
     }
 }
