@@ -16,6 +16,10 @@ public class SpaceShip extends BaseObject
     @Override
     public void move() {
 
+        x += dx;
+        if (x - radius < 0 || x + radius > Space.game.getWidth() - 1) {
+
+        }
     }
 
     @Override
@@ -29,5 +33,12 @@ public class SpaceShip extends BaseObject
 
     public void moveRight() {
         dx = 1;
+    }
+
+    public void fire() {
+        Rocket rocket1 = new Rocket(x - radius + 1, y);
+        Rocket rocket2 = new Rocket(x + radius - 1, y);
+        Space.game.getRockets().add(rocket1);
+        Space.game.getRockets().add(rocket2);
     }
 }
