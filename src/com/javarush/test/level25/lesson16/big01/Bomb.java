@@ -11,13 +11,17 @@ public class Bomb extends BaseObject
         super(x, y, radius);
     }
 
+    public Bomb(double x, double y) {
+        super(x, y, 1);
+    }
+
     @Override
     public void move() {
-
+        super.setY(super.getY() + 1);
     }
 
     @Override
     public void draw(Canvas canvas) {
-
+        canvas.setPoint(x, y, 'B');
     }
 }
