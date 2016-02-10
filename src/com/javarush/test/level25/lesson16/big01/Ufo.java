@@ -1,20 +1,17 @@
 package com.javarush.test.level25.lesson16.big01;
 
 /**
- * Created by Polurival
- * on 07.02.2016.
+ * Класс для НЛО
  */
 public class Ufo extends BaseObject
 {
-    int hod = 0;
-
-    //картинка нло для отрисовки
+    //картинка для отрисовки
     private static int[][] matrix = {
             {0, 0, 0, 0, 0},
             {0, 0, 1, 0, 0},
-            {0, 0, 1, 0, 0},
-            {1, 0, 1, 0, 1},
             {1, 1, 1, 1, 1},
+            {0, 1, 1, 1, 0},
+            {0, 0, 0, 0, 0},
     };
 
     public Ufo(double x, double y)
@@ -22,34 +19,40 @@ public class Ufo extends BaseObject
         super(x, y, 3);
     }
 
+    /**
+     * Метод рисует свой объект на "канвасе".
+     */
     @Override
-    public void move() {
+    public void draw(Canvas canvas)
+    {
+        canvas.drawMatrix(x - radius + 1, y, matrix, 'U');
+    }
 
-        double dx = Math.random() * 2 - 1;
-        double dy = Math.random() * 2 - 1;
+    /**
+     * Двигаем себя на один ход в случайном направлении.
+     */
+    @Override
+    public void move()
+    {
+        double dx = Math.random() * 2-1;
+        double dy = Math.random() * 2-1;
 
-        x = x + dx;
+        x += dx;
+        y += dy;
 
-        if (y <= Space.game.getHeight() / 2)
-        {
-            y = y + dy;
-        }
+        checkBorders(radius, Space.game.getWidth() - radius + 1, 1, Space.game.getHeight() / 2);
 
-        checkBorders(radius, Space.game.getWidth() - radius + 1, 1, Space.game.getHeight() + 1);
-
-        hod++;
-        if (hod == 10) {
+        int random10 = (int) (Math.random() * 10);
+        if (random10 == 0)
             fire();
-            hod = 0;
-        }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        canvas.drawMatrix(x - radius + 1, y, matrix, 'M');
-    }
-
-    public void fire() {
-        Space.game.getBombs().add(new Bomb(x, y));
+    /**
+     * Стреляем.
+     * Сбрасываем(создаем) одну бомбу прямо под собой.
+     */
+    public void fire()
+    {
+        Space.game.getBombs().add(new Bomb(x, y + 3));
     }
 }
