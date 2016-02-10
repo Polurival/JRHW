@@ -2,6 +2,7 @@ package com.javarush.test.level25.lesson16.big01;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -116,6 +117,9 @@ public class Space
      */
     public void createUfo()
     {
+        if (ufos.isEmpty()) {
+            ufos.add(new Ufo(width / 2, 0));
+        }
         //тут нужно создать новый НЛО.
         //1 раз за 10 вызовов метода.
     }
@@ -127,6 +131,15 @@ public class Space
      */
     public void checkBombs()
     {
+        for (Bomb b : bombs) {
+            if (b.isIntersec(ship)) {
+                b.die();
+                ship.die();
+            }
+            if (b.y > height) {
+                b.die();
+            }
+        }
         //тут нужно проверить все возможные столкновения для каждой бомбы.
     }
 
@@ -137,6 +150,19 @@ public class Space
      */
     public void checkRockets()
     {
+        for (Rocket r : rockets)
+        {
+            for (Ufo u : ufos)
+            {
+                if (r.isIntersec(u)) {
+                    r.die();
+                    u.die();
+                }
+            }
+            if (r.y < 0) {
+                r.die();
+            }
+        }
         //тут нужно проверить все возможные столкновения для каждой ракеты.
     }
 
@@ -145,6 +171,26 @@ public class Space
      */
     public void removeDead()
     {
+        Iterator<Rocket> iterator = rockets.iterator();
+        while (iterator.hasNext()) {
+            if (!iterator.next().isAlive()) {
+                iterator.remove();
+            }
+        }
+
+        Iterator<Bomb> iterator1 = bombs.iterator();
+        while (iterator1.hasNext()) {
+            if (!iterator1.next().isAlive()) {
+                iterator1.remove();
+            }
+        }
+
+        Iterator<Ufo> iterator3 = ufos.iterator();
+        while (iterator3.hasNext()) {
+            if (!iterator3.next().isAlive()) {
+                iterator3.remove();
+            }
+        }
         //тут нужно удалить все умершие объекты из списков.
         //Кроме космического корабля - по нему определяем ищет еще игра или нет.
     }
