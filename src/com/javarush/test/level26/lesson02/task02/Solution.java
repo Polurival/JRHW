@@ -1,7 +1,5 @@
 package com.javarush.test.level26.lesson02.task02;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
