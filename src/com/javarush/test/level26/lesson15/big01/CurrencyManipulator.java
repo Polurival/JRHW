@@ -22,4 +22,13 @@ public class CurrencyManipulator
     {
         return currencyCode;
     }
+
+    public void addAmount(int denomination, int count) {
+        Integer currencyCount = denominations.get(denomination);
+        if (currencyCount != null) {
+            denominations.put(denomination, currencyCount + count);
+        } else {
+            denominations.put(denomination, count);
+        }
+    }
 }

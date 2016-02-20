@@ -1,6 +1,7 @@
 package com.javarush.test.level26.lesson15.big01;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
@@ -20,8 +21,36 @@ public class ConsoleHelper
         try {
             message = reader.readLine();
         } catch (Exception e) {
-
         }
         return message;
+    }
+
+    public static String askCurrencyCode() {
+        while (true) {
+            writeMessage("Enter currency code");
+            String currencyCode = readString();
+            if (currencyCode.length() == 3
+                    && Character.isLetter(currencyCode.toCharArray()[0])
+                    && Character.isLetter(currencyCode.toCharArray()[1])
+                    && Character.isLetter(currencyCode.toCharArray()[2])) {
+                currencyCode = currencyCode.toUpperCase();
+                return currencyCode;
+            } else {
+                writeMessage("Incorrect data");
+            }
+        }
+    }
+
+    public static String[] getValidTwoDigits(String currencyCode) {
+        while (true) {
+            writeMessage("Enter two integer positive digits");
+            String[] temp = readString().split(" ");
+            if (temp[0].matches("\\d+") && temp[1].matches("\\d+")) {
+                return temp;
+            } else {
+                writeMessage("Incorrect data");
+            }
+        }
+
     }
 }
