@@ -53,4 +53,21 @@ public class ConsoleHelper
         }
 
     }
+
+    public static Operation askOperation()
+    {
+        while (true)
+        {
+            try
+            {
+                System.out.println("Enter 1 (INFO), 2 (DEPOSIT), 3 (WITHDRAW), 4 (EXIT)");
+                String op = readString();
+                return Operation.getAllowableOperationByOrdinal(Integer.valueOf(op));
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.println("Incorrect operation");
+            }
+        }
+    }
 }
