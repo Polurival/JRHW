@@ -11,7 +11,7 @@ public enum Operation
     WITHDRAW,
     EXIT;
 
-    public static Operation getAllowableOperationByOrdinal(Integer i) {
+    public static Operation getAllowableOperationByOrdinal(Integer i) throws IllegalArgumentException {
         switch (i) {
             case 1:
                 return INFO;

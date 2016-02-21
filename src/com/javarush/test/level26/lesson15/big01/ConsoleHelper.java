@@ -61,8 +61,7 @@ public class ConsoleHelper
             try
             {
                 System.out.println("Enter 1 (INFO), 2 (DEPOSIT), 3 (WITHDRAW), 4 (EXIT)");
-                String op = readString();
-                return Operation.getAllowableOperationByOrdinal(Integer.valueOf(op));
+                return Operation.getAllowableOperationByOrdinal(Integer.valueOf(readString()));
             }
             catch (IllegalArgumentException e)
             {
