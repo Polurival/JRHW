@@ -1,7 +1,8 @@
 package com.javarush.test.level26.lesson15.big01;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Polurival
@@ -9,19 +10,23 @@ import java.util.List;
  */
 public class CurrencyManipulatorFactory
 {
-    private static List<CurrencyManipulator> manipulators = new ArrayList<>();
+    private static Map<String, CurrencyManipulator> manipulators = new HashMap<>();
 
     private CurrencyManipulatorFactory() {
     }
 
     public static CurrencyManipulator getManipulatorByCurrencyCode(String currencyCode) {
-        for (CurrencyManipulator cm : manipulators) {
-            if (cm.getCurrencyCode().equals(currencyCode)) {
-                return cm;
+        for (Map.Entry<String, CurrencyManipulator> pair : manipulators.entrySet()) {
+            if (pair.getKey().equals(currencyCode)) {
+                return pair.getValue();
             }
         }
         CurrencyManipulator newCM = new CurrencyManipulator(currencyCode);
-        manipulators.add(newCM);
+        manipulators.put(currencyCode, newCM);
         return newCM;
+    }
+
+    public static Collection<CurrencyManipulator> getAllCurrencyManipulators() {
+        return manipulators.values();
     }
 }

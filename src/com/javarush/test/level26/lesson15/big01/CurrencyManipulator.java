@@ -11,7 +11,7 @@ public class CurrencyManipulator
 {
     private String currencyCode;
 
-    Map<Integer, Integer> denominations = new HashMap<>();
+    private Map<Integer, Integer> denominations = new HashMap<>();
 
     public CurrencyManipulator(String currencyCode)
     {
@@ -39,5 +39,9 @@ public class CurrencyManipulator
         }
 
         return sum;
+    }
+
+    public boolean hasMoney() {
+        return !denominations.isEmpty();
     }
 }
