@@ -1,7 +1,8 @@
 package com.javarush.test.level26.lesson15.big01;
 
+import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
@@ -16,16 +17,25 @@ public class ConsoleHelper
         System.out.println(message);
     }
 
-    public static String readString() {
+    public static String readString() throws InterruptOperationException
+    {
         String message = null;
         try {
             message = reader.readLine();
         } catch (Exception e) {
         }
+        if (message != null)
+        {
+            if ("EXIT".equals(message.toUpperCase()))
+            {
+                throw new InterruptOperationException();
+            }
+        }
         return message;
     }
 
-    public static String askCurrencyCode() {
+    public static String askCurrencyCode() throws InterruptOperationException
+    {
         while (true) {
             writeMessage("Enter currency code");
             String currencyCode = readString();
@@ -41,7 +51,8 @@ public class ConsoleHelper
         }
     }
 
-    public static String[] getValidTwoDigits(String currencyCode) {
+    public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
+    {
         while (true) {
             writeMessage("Enter two integer positive digits");
             String[] temp = readString().split(" ");
@@ -54,7 +65,7 @@ public class ConsoleHelper
 
     }
 
-    public static Operation askOperation()
+    public static Operation askOperation() throws InterruptOperationException
     {
         while (true)
         {
