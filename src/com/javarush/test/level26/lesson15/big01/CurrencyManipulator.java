@@ -1,7 +1,11 @@
 package com.javarush.test.level26.lesson15.big01;
 
+import com.javarush.test.level26.lesson15.big01.exception.NotEnoughMoneyException;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Polurival
@@ -43,5 +47,43 @@ public class CurrencyManipulator
 
     public boolean hasMoney() {
         return !denominations.isEmpty();
+    }
+
+    public boolean isAmountAvailable(int expectedAmount) {
+
+        return getTotalAmount() >= expectedAmount;
+    }
+
+    public Map<Integer, Integer> withdrawAmount(int expectedAmount) throws NotEnoughMoneyException {
+        Map<Integer, Integer> sortedDenominations = new TreeMap<>(Collections.reverseOrder());
+        sortedDenominations.putAll(denominations);
+        Map<Integer, Integer> sortedWithdraw = new TreeMap<>(Collections.reverseOrder());
+
+        int sum = expectedAmount;
+        if (sum == 0) {
+            try
+            {
+                throw new NullPointerException();
+            } catch (NullPointerException e) {
+                System.out.println("Incorrect data. 0");
+            }
+        }
+        for (Map.Entry<Integer, Integer> pair : sortedDenominations.entrySet()) {
+            int count = sum / pair.getKey();
+            if (count > 0) {
+                sortedWithdraw.put(pair.getKey(), count);
+                sum -= pair.getKey() * count;
+
+                denominations.put(pair.getKey(), pair.getValue() - count);
+                if (denominations.get(pair.getKey()) == 0) {
+                    denominations.remove(pair.getKey());
+                }
+            }
+        }
+        if (sum != 0) {
+            throw new NotEnoughMoneyException();
+        }
+
+        return sortedWithdraw;
     }
 }
