@@ -15,36 +15,36 @@ import java.util.Map;
 class WithdrawCommand implements Command
 {
     @Override
-    public void execute() throws InterruptOperationException
-    {
+    public void execute() throws InterruptOperationException {
         String currencyCode = ConsoleHelper.askCurrencyCode();
-        CurrencyManipulator cm = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(currencyCode);
+        CurrencyManipulator currencyManipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(currencyCode);
 
-        boolean flag = true;
-        while (flag) {
-            System.out.println("Enter amount of money for withdraw");
-            String temp = ConsoleHelper.readString();
-            if (temp.matches("\\d+")) {
-                int amount = Integer.valueOf(temp);
-                if (cm.isAmountAvailable(amount)) {
-                    Map<Integer, Integer> wa;
-                    try
-                    {
-                        wa = cm.withdrawAmount(amount);
-                        for (Map.Entry<Integer, Integer> pair : wa.entrySet()) {
-                            System.out.println("\t" + pair.getKey() + " - " + pair.getValue());
-                        }
-                    }
-                    catch (NotEnoughMoneyException e)
-                    {
-                        System.out.println("Not enough money");
-                    }
-                    catch (ConcurrentModificationException e) {}
-                    flag = false;
+        while(true){
+            try
+            {
+                ConsoleHelper.writeMessage("Введите сумму:");
+                int sum = Integer.parseInt(ConsoleHelper.readString());
+                if(sum <= 0){
+                    throw new NumberFormatException();
                 }
-            } else {
-                System.out.println("Incorrect data");
+                if(!currencyManipulator.isAmountAvailable(sum)){
+                    continue;
+                }
+                Map<Integer, Integer> currencyMap = currencyManipulator.withdrawAmount(sum);
+                for(Map.Entry<Integer, Integer> pair : currencyMap.entrySet()){
+                    ConsoleHelper.writeMessage("\t" + pair.getKey() + " - " + pair.getValue());
+                }
+                ConsoleHelper.writeMessage("Транзакция прошла успешно.");
+                break;
+
+            }catch(NumberFormatException e){
+                ConsoleHelper.writeMessage("Введены некорректные данные.");
             }
+            catch (NotEnoughMoneyException e)
+            {
+                ConsoleHelper.writeMessage("В банкомате недостаточно банкнот.");
+            }
+            catch(ConcurrentModificationException ignore){}
         }
     }
 }

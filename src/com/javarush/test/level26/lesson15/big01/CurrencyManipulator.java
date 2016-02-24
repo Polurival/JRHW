@@ -2,28 +2,22 @@ package com.javarush.test.level26.lesson15.big01;
 
 import com.javarush.test.level26.lesson15.big01.exception.NotEnoughMoneyException;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by Polurival
  * on 18.02.2016.
  */
-public class CurrencyManipulator
-{
+public class CurrencyManipulator {
     private String currencyCode;
 
     private Map<Integer, Integer> denominations = new HashMap<>();
 
-    public CurrencyManipulator(String currencyCode)
-    {
+    public CurrencyManipulator(String currencyCode) {
         this.currencyCode = currencyCode;
     }
 
-    public String getCurrencyCode()
-    {
+    public String getCurrencyCode() {
         return currencyCode;
     }
 
@@ -55,35 +49,43 @@ public class CurrencyManipulator
     }
 
     public Map<Integer, Integer> withdrawAmount(int expectedAmount) throws NotEnoughMoneyException {
-        Map<Integer, Integer> sortedDenominations = new TreeMap<>(Collections.reverseOrder());
-        sortedDenominations.putAll(denominations);
-        Map<Integer, Integer> sortedWithdraw = new TreeMap<>(Collections.reverseOrder());
+        Map<Integer, Integer> resultMap = new TreeMap<>(Collections.reverseOrder());
+        Map<Integer, Integer> tempMap = new HashMap<>(denominations);
+        List<Integer> denominationsKeyList = new ArrayList<>(tempMap.keySet());
+        Collections.sort(denominationsKeyList, Collections.<Integer>reverseOrder());
 
-        int sum = expectedAmount;
-        if (sum == 0) {
-            try
-            {
-                throw new NullPointerException();
-            } catch (NullPointerException e) {
-                System.out.println("Incorrect data. 0");
-            }
-        }
-        for (Map.Entry<Integer, Integer> pair : sortedDenominations.entrySet()) {
-            int count = sum / pair.getKey();
-            if (count > 0) {
-                sortedWithdraw.put(pair.getKey(), count);
-                sum -= pair.getKey() * count;
+        for(int i = 0; i < denominationsKeyList.size(); i++){
+            int nominal = denominationsKeyList.get(i);
+            int countOfNominal = tempMap.get(nominal);
+            int countOfNominalForPut = 0;
 
-                denominations.put(pair.getKey(), pair.getValue() - count);
-                if (denominations.get(pair.getKey()) == 0) {
-                    denominations.remove(pair.getKey());
+            for(int k = 0; k < countOfNominal; k++){
+                if(expectedAmount >= nominal){
+                    countOfNominalForPut++;
+                    expectedAmount -= nominal;
+                }else{
+                    break;
                 }
             }
-        }
-        if (sum != 0) {
-            throw new NotEnoughMoneyException();
+            if(countOfNominalForPut != 0)
+            {
+                if (countOfNominal - countOfNominalForPut == 0)
+                {
+                    tempMap.remove(nominal);
+                } else
+                {
+                    tempMap.put(nominal, countOfNominal - countOfNominalForPut);
+                }
+                resultMap.put(nominal, countOfNominalForPut);
+            }
         }
 
-        return sortedWithdraw;
+        if(expectedAmount != 0) throw new NotEnoughMoneyException();
+
+        denominations.clear();
+        denominations.putAll(tempMap);
+
+        return resultMap;
     }
 }
+
