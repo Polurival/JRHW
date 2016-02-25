@@ -4,6 +4,8 @@ import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationExce
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Created by Polurival
@@ -11,6 +13,8 @@ import java.io.InputStreamReader;
  */
 public class ConsoleHelper
 {
+    private static ResourceBundle res = ResourceBundle.getBundle("com.javarush.test.level26.lesson15.big01.resources.common_en", Locale.ENGLISH);
+
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     public static void writeMessage(String message) {
@@ -28,6 +32,7 @@ public class ConsoleHelper
         {
             if ("EXIT".equals(message.toUpperCase()))
             {
+                writeMessage(res.getString("the.end"));
                 throw new InterruptOperationException();
             }
         }
@@ -37,7 +42,7 @@ public class ConsoleHelper
     public static String askCurrencyCode() throws InterruptOperationException
     {
         while (true) {
-            writeMessage("Enter currency code");
+            writeMessage(res.getString("choose.currency.code"));
             String currencyCode = readString();
             if (currencyCode.length() == 3
                     && Character.isLetter(currencyCode.toCharArray()[0])
@@ -46,7 +51,7 @@ public class ConsoleHelper
                 currencyCode = currencyCode.toUpperCase();
                 return currencyCode;
             } else {
-                writeMessage("Incorrect data");
+                writeMessage(res.getString("invalid.data"));
             }
         }
     }
@@ -54,12 +59,12 @@ public class ConsoleHelper
     public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
     {
         while (true) {
-            writeMessage("Enter two integer positive digits");
+            writeMessage(String.format(res.getString("choose.denomination.and.count.format"), currencyCode));
             String[] temp = readString().split(" ");
             if (temp[0].matches("\\d+") && temp[1].matches("\\d+")) {
                 return temp;
             } else {
-                writeMessage(currencyCode);
+                writeMessage(res.getString("invalid.data"));
             }
         }
 
@@ -71,12 +76,27 @@ public class ConsoleHelper
         {
             try
             {
-                System.out.println("Enter 1 (INFO), 2 (DEPOSIT), 3 (WITHDRAW), 4 (EXIT)");
-                return Operation.getAllowableOperationByOrdinal(Integer.valueOf(readString()));
+                writeMessage(res.getString("choose.operation"));
+                Operation op = Operation.getAllowableOperationByOrdinal(Integer.valueOf(readString()));
+                switch (op) {
+                    case INFO:
+                        writeMessage(res.getString("operation.INFO"));
+                        break;
+                    case DEPOSIT:
+                        writeMessage(res.getString("operation.DEPOSIT"));
+                        break;
+                    case WITHDRAW:
+                        writeMessage(res.getString("operation.WITHDRAW"));
+                        break;
+                    case EXIT:
+                        writeMessage(res.getString("operation.EXIT"));
+                        break;
+                }
+                return op;
             }
             catch (IllegalArgumentException e)
             {
-                System.out.println("Incorrect operation");
+                writeMessage(res.getString("invalid.data"));
             }
         }
     }
