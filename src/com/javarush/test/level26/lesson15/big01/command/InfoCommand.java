@@ -1,5 +1,6 @@
 package com.javarush.test.level26.lesson15.big01.command;
 
+import com.javarush.test.level26.lesson15.big01.CashMachine;
 import com.javarush.test.level26.lesson15.big01.CurrencyManipulator;
 import com.javarush.test.level26.lesson15.big01.CurrencyManipulatorFactory;
 
@@ -12,7 +13,7 @@ import java.util.ResourceBundle;
  */
 class InfoCommand implements Command
 {
-    private ResourceBundle res = ResourceBundle.getBundle("com.javarush.test.level26.lesson15.big01.resources.info_en", Locale.ENGLISH);
+    private ResourceBundle res = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "info_en", Locale.ENGLISH);
 
     @Override
     public void execute()
@@ -20,15 +21,18 @@ class InfoCommand implements Command
         Collection<CurrencyManipulator> bills = CurrencyManipulatorFactory.getAllCurrencyManipulators();
         boolean hasMoney = false;
 
-        for (CurrencyManipulator bill : bills) {
-            if (bill.hasMoney()) {
+        for (CurrencyManipulator bill : bills)
+        {
+            if (bill.hasMoney())
+            {
                 hasMoney = true;
                 System.out.println(res.getString("before"));
                 System.out.println(bill.getCurrencyCode() + " - " + bill.getTotalAmount());
             }
         }
 
-        if (!hasMoney) {
+        if (!hasMoney)
+        {
             System.out.println(res.getString("no.money"));
         }
     }

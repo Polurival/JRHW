@@ -1,5 +1,6 @@
 package com.javarush.test.level26.lesson15.big01.command;
 
+import com.javarush.test.level26.lesson15.big01.CashMachine;
 import com.javarush.test.level26.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
 
@@ -12,8 +13,8 @@ import java.util.ResourceBundle;
  */
 class LoginCommand implements Command
 {
-    private ResourceBundle validCreditCards = ResourceBundle.getBundle("com.javarush.test.level26.lesson15.big01.resources.verifiedCards", Locale.ENGLISH);
-    private ResourceBundle res = ResourceBundle.getBundle("com.javarush.test.level26.lesson15.big01.resources.login_en", Locale.ENGLISH);
+    private ResourceBundle validCreditCards = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "verifiedCards", Locale.ENGLISH);
+    private ResourceBundle res = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "login_en", Locale.ENGLISH);
 
     @Override
     public void execute() throws InterruptOperationException
@@ -24,27 +25,34 @@ class LoginCommand implements Command
         System.out.println(res.getString("specify.data"));
 
         int tries = 0;
-        while (true) {
-            if (tries > 0) {
+        while (true)
+        {
+            if (tries > 0)
+            {
                 System.out.println(res.getString("try.again.with.details"));
             }
             String cardNumber = ConsoleHelper.readString();
             String pinCode = ConsoleHelper.readString();
-            if (cardNumber.matches("\\d{12}") && pinCode.matches("\\d{4}")) {
+            if (cardNumber.matches("\\d{12}") && pinCode.matches("\\d{4}"))
+            {
                 boolean isLogin = false;
-                while(cardNumbers.hasMoreElements()) {
+                while (cardNumbers.hasMoreElements())
+                {
                     String c = cardNumbers.nextElement();
                     String p = validCreditCards.getString(c);
-                    if (c.equals(cardNumber) && p.equals(pinCode)) {
+                    if (c.equals(cardNumber) && p.equals(pinCode))
+                    {
                         isLogin = true;
                         break;
                     }
                 }
-                if (isLogin) {
+                if (isLogin)
+                {
                     System.out.println(res.getString("success.format"));
                     break;
                 }
-            } else {
+            } else
+            {
                 System.out.println(String.format(res.getString("not.verified.format"), cardNumber));
                 System.out.println(res.getString("try.again.or.exit"));
                 tries++;

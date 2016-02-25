@@ -12,12 +12,16 @@ public class CurrencyManipulatorFactory
 {
     private static Map<String, CurrencyManipulator> manipulators = new HashMap<>();
 
-    private CurrencyManipulatorFactory() {
+    private CurrencyManipulatorFactory()
+    {
     }
 
-    public static CurrencyManipulator getManipulatorByCurrencyCode(String currencyCode) {
-        for (Map.Entry<String, CurrencyManipulator> pair : manipulators.entrySet()) {
-            if (pair.getKey().equals(currencyCode)) {
+    public static CurrencyManipulator getManipulatorByCurrencyCode(String currencyCode)
+    {
+        for (Map.Entry<String, CurrencyManipulator> pair : manipulators.entrySet())
+        {
+            if (pair.getKey().equals(currencyCode))
+            {
                 return pair.getValue();
             }
         }
@@ -26,7 +30,8 @@ public class CurrencyManipulatorFactory
         return newCM;
     }
 
-    public static Collection<CurrencyManipulator> getAllCurrencyManipulators() {
+    public static Collection<CurrencyManipulator> getAllCurrencyManipulators()
+    {
         return manipulators.values();
     }
 }

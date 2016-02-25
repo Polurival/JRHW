@@ -13,26 +13,29 @@ import java.util.ResourceBundle;
  */
 public class ConsoleHelper
 {
-    private static ResourceBundle res = ResourceBundle.getBundle("com.javarush.test.level26.lesson15.big01.resources.common_en", Locale.ENGLISH);
+    private static ResourceBundle res = ResourceBundle.getBundle(CashMachine.RESOURCE_PATH + "common_en", Locale.ENGLISH);
 
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-    public static void writeMessage(String message) {
+    public static void writeMessage(String message)
+    {
         System.out.println(message);
     }
 
     public static String readString() throws InterruptOperationException
     {
         String message = null;
-        try {
+        try
+        {
             message = reader.readLine();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
         }
         if (message != null)
         {
             if ("EXIT".equals(message.toUpperCase()))
             {
-                writeMessage(res.getString("the.end"));
                 throw new InterruptOperationException();
             }
         }
@@ -41,16 +44,19 @@ public class ConsoleHelper
 
     public static String askCurrencyCode() throws InterruptOperationException
     {
-        while (true) {
+        while (true)
+        {
             writeMessage(res.getString("choose.currency.code"));
             String currencyCode = readString();
             if (currencyCode.length() == 3
                     && Character.isLetter(currencyCode.toCharArray()[0])
                     && Character.isLetter(currencyCode.toCharArray()[1])
-                    && Character.isLetter(currencyCode.toCharArray()[2])) {
+                    && Character.isLetter(currencyCode.toCharArray()[2]))
+            {
                 currencyCode = currencyCode.toUpperCase();
                 return currencyCode;
-            } else {
+            } else
+            {
                 writeMessage(res.getString("invalid.data"));
             }
         }
@@ -58,12 +64,15 @@ public class ConsoleHelper
 
     public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
     {
-        while (true) {
+        while (true)
+        {
             writeMessage(String.format(res.getString("choose.denomination.and.count.format"), currencyCode));
             String[] temp = readString().split(" ");
-            if (temp[0].matches("\\d+") && temp[1].matches("\\d+")) {
+            if (temp[0].matches("\\d+") && temp[1].matches("\\d+"))
+            {
                 return temp;
-            } else {
+            } else
+            {
                 writeMessage(res.getString("invalid.data"));
             }
         }
@@ -78,7 +87,8 @@ public class ConsoleHelper
             {
                 writeMessage(res.getString("choose.operation"));
                 Operation op = Operation.getAllowableOperationByOrdinal(Integer.valueOf(readString()));
-                switch (op) {
+                switch (op)
+                {
                     case INFO:
                         writeMessage(res.getString("operation.INFO"));
                         break;
@@ -99,5 +109,10 @@ public class ConsoleHelper
                 writeMessage(res.getString("invalid.data"));
             }
         }
+    }
+
+    public static void printExitMessage()
+    {
+        writeMessage(res.getString("the.end"));
     }
 }

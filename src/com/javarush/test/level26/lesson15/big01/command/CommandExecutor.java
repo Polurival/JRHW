@@ -13,9 +13,12 @@ public class CommandExecutor
 {
     private static Map<Operation, Command> commands = new HashMap<>();
 
-    private CommandExecutor() {}
+    private CommandExecutor()
+    {
+    }
 
-    static {
+    static
+    {
         commands.put(Operation.LOGIN, new LoginCommand());
         commands.put(Operation.INFO, new InfoCommand());
         commands.put(Operation.DEPOSIT, new DepositCommand());
