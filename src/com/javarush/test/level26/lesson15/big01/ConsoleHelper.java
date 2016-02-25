@@ -59,7 +59,7 @@ public class ConsoleHelper
             if (temp[0].matches("\\d+") && temp[1].matches("\\d+")) {
                 return temp;
             } else {
-                writeMessage("Incorrect data");
+                writeMessage(currencyCode);
             }
         }
 
