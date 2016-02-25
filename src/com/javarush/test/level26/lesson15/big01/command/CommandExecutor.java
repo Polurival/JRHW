@@ -16,6 +16,7 @@ public class CommandExecutor
     private CommandExecutor() {}
 
     static {
+        commands.put(Operation.LOGIN, new LoginCommand());
         commands.put(Operation.INFO, new InfoCommand());
         commands.put(Operation.DEPOSIT, new DepositCommand());
         commands.put(Operation.WITHDRAW, new WithdrawCommand());
