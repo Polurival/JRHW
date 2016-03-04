@@ -29,7 +29,7 @@ public class Order
             return "";
         } else
         {
-            return "Your order: " + dishes.toString() + " of Tablet{number=" + tablet.number + "}";
+            return "Your order: " + dishes.toString() + " of " + tablet.toString();
         }
     }
 }
