@@ -10,8 +10,8 @@ import java.util.Observer;
 public class Waitor implements Observer
 {
     @Override
-    public void update(Observable o, Object arg)
+    public void update(Observable cook, Object order)
     {
-        System.out.println(arg + " was cooked by " + o);
+        System.out.println(order + " was cooked by " + cook);
     }
 }

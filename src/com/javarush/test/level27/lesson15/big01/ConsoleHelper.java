@@ -31,16 +31,21 @@ public class ConsoleHelper
         List<Dish> dishes = new ArrayList<>();
         while (true)
         {
-            writeMessage("Add a dish to your order: " + Dish.allDishesToString() + " or type 'exit' to finish");
-
             String input = readString();
             if ("exit".equals(input))
             {
                 break;
             }
 
-            Dish dish = Dish.valueOf(input);
-            dishes.add(dish);
+            try
+            {
+                Dish dish = Dish.valueOf(input);
+                dishes.add(dish);
+            }
+            catch (IllegalArgumentException e)
+            {
+                writeMessage(input + " is not detected");
+            }
         }
         return dishes;
     }
