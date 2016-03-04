@@ -12,11 +12,14 @@ public enum Dish
     Juice,
     Water;
 
-    public static String allDishesToString() {
+    public static String allDishesToString()
+    {
         StringBuilder sb = new StringBuilder();
-        for (Dish dish : Dish.values()) {
+        for (Dish dish : Dish.values())
+        {
             sb.append(dish);
-            if (dish.ordinal() != Dish.values().length - 1) {
+            if (dish.ordinal() != Dish.values().length - 1)
+            {
                 sb.append(", ");
             }
         }
