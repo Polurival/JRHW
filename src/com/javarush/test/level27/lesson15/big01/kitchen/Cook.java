@@ -7,7 +7,7 @@ import java.util.Observer;
  * Created by
  * Polurival on 04.03.2016.
  */
-public class Cook implements Observer
+public class Cook extends Observable implements Observer
 {
     private String name;
 
@@ -26,5 +26,7 @@ public class Cook implements Observer
     public void update(Observable o, Object arg)
     {
         System.out.println("Start cooking - " + arg.toString());
+        setChanged();
+        notifyObservers(arg);
     }
 }
