@@ -15,7 +15,7 @@ public class Tablet extends Observable
 {
     private final static java.util.logging.Logger LOG = Logger.getLogger(Tablet.class.getName());
 
-    public final int number;
+    private final int number;
 
     public Tablet(int number)
     {
