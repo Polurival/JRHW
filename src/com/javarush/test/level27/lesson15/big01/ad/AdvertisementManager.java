@@ -25,8 +25,10 @@ public class AdvertisementManager
             throw new NoVideoAvailableException();
         }
 
-        List<List<Advertisement>> allCombinations = powerList(storage.list());
-        List<Advertisement> bestList = chooseBestList(allCombinations);
+        List<Advertisement> bestList = chooseBestList(powerList(storage.list()));
+        if (bestList.isEmpty()) {
+            throw new NoVideoAvailableException();
+        }
 
         Collections.sort(bestList, new Comparator<Advertisement>()
         {
@@ -58,15 +60,20 @@ public class AdvertisementManager
         Iterator iterator = allCombinations.iterator();
         while (iterator.hasNext()) {
             List<Advertisement> list = (List<Advertisement>) iterator.next();
-            if (list.isEmpty()) {
-                iterator.remove();
-            }
             int totalDuration = 0;
+            boolean removed = false;
             for (Advertisement ad : list) {
                 totalDuration += ad.getDuration();
+                if (ad.getHits() < 1) {
+                    removed = true;
+                    iterator.remove();
+                    break;
+                }
             }
-            if (totalDuration > timeSeconds) {
-                iterator.remove();
+            if (!removed) {
+                if (totalDuration > timeSeconds) {
+                    iterator.remove();
+                }
             }
         }
 
@@ -87,21 +94,17 @@ public class AdvertisementManager
                     sumA2 += a2.getAmountPerOneDisplaying();
                     durA2 += a2.getDuration();
                 }
-                long resultSum = sumA2 - sumA1;
-                if (resultSum != 0) {
-                    return (int) resultSum;
+                if (sumA1 != sumA2) {
+                    return Long.compare(sumA2, sumA1);
                 }
-
-                int resultDur = durA2 - durA1;
-                if (resultDur != 0) {
-                    return resultDur;
+                if (durA1 != durA2) {
+                    return Integer.compare(durA2, durA1);
                 }
-
-                return o1.size() - o2.size();
+                return Integer.compare(o1.size(), o2.size());
             }
         });
 
-        return allCombinations.get(0);
+        return allCombinations.size() != 0 ? allCombinations.get(0) : new ArrayList<Advertisement>();
     }
 
     private <Advertisement> List<List<Advertisement>> powerList(List<Advertisement> originalList) {
