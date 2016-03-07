@@ -11,7 +11,7 @@ class AdvertisementStorage
 {
     private static AdvertisementStorage instance = new AdvertisementStorage();
 
-    private final List<Object> videos = new ArrayList<>();
+    private final List<Advertisement> videos = new ArrayList<>();
 
     private AdvertisementStorage()
     {
@@ -21,17 +21,17 @@ class AdvertisementStorage
         videos.add(new Advertisement(someContent, "Third Video", 400, 2, 10 * 60));
     }
 
-    public static AdvertisementStorage getInstance()
+    static AdvertisementStorage getInstance()
     {
         return instance;
     }
 
-    public List<Object> list()
+    List<Advertisement> list()
     {
         return videos;
     }
 
-    public void add(Advertisement advertisement)
+    void add(Advertisement advertisement)
     {
         videos.add(advertisement);
     }

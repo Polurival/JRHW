@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class Tablet extends Observable
 {
-    private final static java.util.logging.Logger LOG = Logger.getLogger(Tablet.class.getName());
+    private final static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
 
     private final int number;
 
@@ -26,24 +26,27 @@ public class Tablet extends Observable
 
     public void createOrder()
     {
-        Order order = null;
+
         try
         {
-            order = new Order(this);
+            final Order order = new Order(this);
             if (!order.isEmpty())
             {
                 ConsoleHelper.writeMessage(order.toString());
-                new AdvertisementManager(order.getTotalCookingTime()).processVideos();
+                try
+                {
+                    new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
+                }
+                catch (NoVideoAvailableException e) {
+                    logger.log(Level.INFO, "No video is available for the order " + order);
+                }
                 setChanged();
                 notifyObservers(order);
             }
         }
         catch (IOException e)
         {
-            LOG.log(Level.SEVERE, "Console is unavailable.");
-        }
-        catch (NoVideoAvailableException e) {
-            LOG.log(Level.INFO, "No video is available for the order " + order);
+            logger.log(Level.SEVERE, "Console is unavailable.");
         }
     }
 
