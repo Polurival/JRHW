@@ -18,5 +18,11 @@ public class Restaurant
         Tablet fifthTablet = new Tablet(5);
         fifthTablet.addObserver(cook);
         fifthTablet.createOrder();
+
+        DirectorTablet directorTablet = new DirectorTablet();
+        directorTablet.printAdvertisementProfit();
+        directorTablet.printCookWorkloading();
+        directorTablet.printActiveVideoSet();
+        directorTablet.printArchivedVideoSet();
     }
 }
