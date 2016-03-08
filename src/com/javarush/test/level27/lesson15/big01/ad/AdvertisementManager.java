@@ -1,6 +1,9 @@
 package com.javarush.test.level27.lesson15.big01.ad;
 
 import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.statistic.event.EventDataRow;
+import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEventDataRow;
 
 import java.util.*;
 
@@ -44,6 +47,16 @@ public class AdvertisementManager
                 return Long.compare(oneSecondCost1, oneSecondCost2);
             }
         });
+
+        int amount = 0;
+        int totalDuration = 0;
+        for (Advertisement a : bestList)
+        {
+            amount += a.getAmountPerOneDisplaying();
+            totalDuration += a.getDuration();
+        }
+        EventDataRow eventDataRow = new VideoSelectedEventDataRow(bestList, amount, totalDuration);
+        StatisticManager.getInstance().register(eventDataRow);
 
         for (Advertisement a : bestList)
         {

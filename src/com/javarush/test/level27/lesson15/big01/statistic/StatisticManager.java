@@ -17,10 +17,14 @@ public class StatisticManager
     private class StatisticStorage {
         private Map<EventType, List<EventDataRow>> map = new HashMap<>();
 
-        public StatisticStorage() {
-            map.put(EventType.COOKED_ORDER, new ArrayList<EventDataRow>());
-            map.put(EventType.SELECTED_VIDEOS, new ArrayList<EventDataRow>());
-            map.put(EventType.NO_AVAILABLE_VIDEO, new ArrayList<EventDataRow>());
+        private StatisticStorage() {
+            for (EventType eventType : EventType.values()) {
+                map.put(eventType, new ArrayList<EventDataRow>());
+            }
+        }
+
+        private void put(EventDataRow data) {
+            map.get(data.getType()).add(data);
         }
     }
 
@@ -36,7 +40,7 @@ public class StatisticManager
     }
 
     public void register(EventDataRow data) {
-        //TODO
+        statisticStorage.put(data);
     }
 
 }

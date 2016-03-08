@@ -21,6 +21,11 @@ public class Order
         this.dishes = ConsoleHelper.getAllDishesForOrder();
     }
 
+    public List<Dish> getDishes()
+    {
+        return dishes;
+    }
+
     public int getTotalCookingTime()
     {
         int sum = 0;
