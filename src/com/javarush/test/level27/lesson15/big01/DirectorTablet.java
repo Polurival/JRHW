@@ -7,18 +7,18 @@ import java.util.Map;
 /**
  * Created by
  * Polurival on 08.03.2016.
- */
+*/
 public class DirectorTablet
 {
     public void printAdvertisementProfit() {
-        Map<String, Long> map = StatisticManager.getInstance().getStatisticForShownAdvertisement();
-        long totalAmount = 0;
+        Map<String, Double> map = StatisticManager.getInstance().getStatisticForShownAdvertisement();
+        double totalAmount = 0;
 
-        for (Map.Entry<String, Long> entry : map.entrySet()) {
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
             totalAmount += entry.getValue();
-            System.out.println(entry.getKey() + " - " + entry.getValue());
+            System.out.println(entry.getKey() + " - " + String.format("%.2f",entry.getValue()));
         }
-        System.out.println("Total - " + totalAmount);
+        System.out.println(String.format("Total - %.2f", totalAmount));
     }
 
     public void printCookWorkloading() {

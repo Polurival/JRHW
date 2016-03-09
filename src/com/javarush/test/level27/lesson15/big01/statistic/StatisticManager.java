@@ -54,17 +54,17 @@ public class StatisticManager
         cooks.add(cook);
     }
 
-    public Map<String, Long> getStatisticForShownAdvertisement() {
+    public Map<String, Double> getStatisticForShownAdvertisement() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
         Map<EventType, List<EventDataRow>> storageMap = statisticStorage.getData();
         List<EventDataRow> list = storageMap.get(EventType.SELECTED_VIDEOS);
 
-        Map<String, Long> map = new TreeMap<String, Long>(Collections.reverseOrder());
+        Map<String, Double> map = new TreeMap<String, Double>(Collections.reverseOrder());
 
         for (EventDataRow event : list) {
             VideoSelectedEventDataRow videoSelectedEvent = (VideoSelectedEventDataRow) event;
             String date = dateFormat.format(videoSelectedEvent.getDate());
-            long amount = videoSelectedEvent.getAmount();
+            double amount = (double) videoSelectedEvent.getAmount() / 100;
 
             if (map.containsKey(date)) {
                 map.put(date, map.get(date) + amount);

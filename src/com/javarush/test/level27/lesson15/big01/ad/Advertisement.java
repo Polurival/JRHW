@@ -47,6 +47,9 @@ public class Advertisement
         if (hits <= 0) {
             throw new UnsupportedOperationException();
         } else {
+            if (hits == 1) {
+                amountPerOneDisplaying += initialAmount % amountPerOneDisplaying;
+            }
             hits--;
         }
     }
