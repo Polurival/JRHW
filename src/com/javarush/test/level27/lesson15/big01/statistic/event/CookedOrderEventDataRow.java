@@ -38,6 +38,11 @@ public class CookedOrderEventDataRow implements EventDataRow
         return currentDate;
     }
 
+    public String getCookName()
+    {
+        return cookName;
+    }
+
     @Override
     public int getTime()
     {
