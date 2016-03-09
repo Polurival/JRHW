@@ -6,7 +6,6 @@ import com.javarush.test.level27.lesson15.big01.statistic.event.EventDataRow;
 import com.javarush.test.level27.lesson15.big01.statistic.event.EventType;
 import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEventDataRow;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -54,50 +53,88 @@ public class StatisticManager
         cooks.add(cook);
     }
 
-    public Map<String, Double> getStatisticForShownAdvertisement() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+    public Map<Date, Double> getStatisticForShownAdvertisement() {
         Map<EventType, List<EventDataRow>> storageMap = statisticStorage.getData();
-        List<EventDataRow> list = storageMap.get(EventType.SELECTED_VIDEOS);
-
-        Map<String, Double> map = new TreeMap<String, Double>(Collections.reverseOrder());
-
-        for (EventDataRow event : list) {
-            VideoSelectedEventDataRow videoSelectedEvent = (VideoSelectedEventDataRow) event;
-            String date = dateFormat.format(videoSelectedEvent.getDate());
-            double amount = (double) videoSelectedEvent.getAmount() / 100;
-
-            if (map.containsKey(date)) {
-                map.put(date, map.get(date) + amount);
-            } else {
-                map.put(date, amount);
+        Map<Date, Double> resultMap = new TreeMap<>(new Comparator<Date>()
+        {
+            @Override
+            public int compare(Date o1, Date o2)
+            {
+                return o2.compareTo(o1);
+            }
+        });
+        if (storageMap != null)
+        {
+            List<EventDataRow> list = storageMap.get(EventType.SELECTED_VIDEOS);
+            for (EventDataRow event : list) {
+                VideoSelectedEventDataRow videoSelectedEvent = (VideoSelectedEventDataRow) event;
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(videoSelectedEvent.getDate());
+                GregorianCalendar g = new GregorianCalendar(cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                if (resultMap.containsKey(g.getTime()))
+                {
+                    double tmp = resultMap.get(g.getTime()) + (double) videoSelectedEvent.getAmount() / 100;
+                    resultMap.remove(g.getTime());
+                    resultMap.put(g.getTime(), tmp);
+                }
+                else
+                {
+                    resultMap.put(g.getTime(), (double) videoSelectedEvent.getAmount() / 100);
+                }
             }
         }
-        return map;
+        return resultMap;
     }
 
-    public Map<String, Map<String, Integer>> getStatisticForCooks() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+    public Map<Date, Map<String, Integer>> getStatisticForCooks() {
         Map<EventType, List<EventDataRow>> storageMap = statisticStorage.getData();
-        List<EventDataRow> list = storageMap.get(EventType.COOKED_ORDER);
-
-        Map<String, Map<String, Integer>> map = new TreeMap<String, Map<String, Integer>>(Collections.reverseOrder());
-
-        for (EventDataRow event : list) {
-            CookedOrderEventDataRow cookedOrderEvent = (CookedOrderEventDataRow) event;
-            String date = dateFormat.format(cookedOrderEvent.getDate());
-            String cookName = cookedOrderEvent.getCookName();
-            int cookingTimeMin = cookedOrderEvent.getTime();
-
-            if (map.containsKey(date)) {
-                Map<String, Integer> temp = map.get(date);
-                temp.put(cookName, cookingTimeMin);
-                map.put(date, temp);
-            } else {
-                Map<String, Integer> temp = new TreeMap<String, Integer>();
-                temp.put(cookName, cookingTimeMin);
-                map.put(date, temp);
+        Map<Date, Map<String, Integer>> resultMap = new TreeMap<>(new Comparator<Date>()
+        {
+            @Override
+            public int compare(Date o1, Date o2)
+            {
+                return o2.compareTo(o1);
+            }
+        });
+        if (storageMap != null) {
+            List<EventDataRow> list = storageMap.get(EventType.COOKED_ORDER);
+            for (EventDataRow event : list) {
+                CookedOrderEventDataRow cookedOrderEvent = (CookedOrderEventDataRow) event;
+                int cookingTimeMin = cookedOrderEvent.getTime();
+                if (cookingTimeMin == 0) {
+                    continue;
+                }
+                if (cookingTimeMin % 60 == 0) {
+                    cookingTimeMin = cookingTimeMin / 60;
+                } else {
+                    cookingTimeMin = (cookingTimeMin / 60) + 1;
+                }
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(event.getDate());
+                GregorianCalendar g = new GregorianCalendar(cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                if (resultMap.containsKey(g.getTime())) {
+                    if (resultMap.get(g.getTime()).containsKey(cookedOrderEvent.getCookName())) {
+                        int tmp = resultMap.get(g.getTime()).get(cookedOrderEvent.getCookName()) + cookingTimeMin;
+                        resultMap.get(g.getTime()).remove(cookedOrderEvent.getCookName());
+                        resultMap.get(g.getTime()).put(cookedOrderEvent.getCookName(), tmp);
+                    } else {
+                        resultMap.get(g.getTime()).put(cookedOrderEvent.getCookName(), cookingTimeMin);
+                    }
+                } else {
+                    resultMap.put(g.getTime(), new TreeMap<String, Integer>(new Comparator<String>()
+                    {
+                        @Override
+                        public int compare(String o1, String o2)
+                        {
+                            return o1.compareToIgnoreCase(o2);
+                        }
+                    }));
+                    resultMap.get(g.getTime()).put(cookedOrderEvent.getCookName(), cookingTimeMin);
+                }
             }
         }
-        return map;
+        return resultMap;
     }
 }
