@@ -2,6 +2,10 @@ package com.javarush.test.level27.lesson15.big01;
 
 import com.javarush.test.level27.lesson15.big01.kitchen.Cook;
 import com.javarush.test.level27.lesson15.big01.kitchen.Waitor;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by
@@ -13,12 +17,38 @@ public class Restaurant
 
     public static void main(String[] args)
     {
-        Tablet tablet = new Tablet(5);
-        Cook cook = new Cook("Amigo");
+        Cook amigo = new Cook("Amigo");
+        Cook makarevich = new Cook("Makarevich");
+
+        StatisticEventManager statisticEventManager = StatisticEventManager.getInstance();
+        statisticEventManager.register(amigo);
+        statisticEventManager.register(makarevich);
+
         Waitor waitor = new Waitor();
-        tablet.addObserver(cook);
-        cook.addObserver(waitor);
-        tablet.createOrder();
+        amigo.addObserver(waitor);
+        makarevich.addObserver(waitor);
+
+        List<Tablet> tablets = new ArrayList<>(5);
+        for (int i = 1; i <= 5; i++) {
+            Tablet tablet = new Tablet(i);
+            tablet.addObserver(amigo);
+            tablet.addObserver(makarevich);
+            tablets.add(tablet);
+        }
+
+        RandomOrderGeneratorTask task = new RandomOrderGeneratorTask(tablets, ORDER_CREATING_INTERVAL);
+        Thread thread = new Thread(task);
+        thread.start();
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e)
+        {
+        }
+        thread.interrupt();
+
+
         DirectorTablet directorTablet = new DirectorTablet();
         directorTablet.printAdvertisementProfit();
         directorTablet.printCookWorkloading();

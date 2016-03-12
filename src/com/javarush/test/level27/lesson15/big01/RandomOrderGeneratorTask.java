@@ -9,11 +9,11 @@ import java.util.List;
 public class RandomOrderGeneratorTask implements Runnable
 {
     private List<Tablet> tablets;
-    private int delay;
+    private int interval;
 
-    public RandomOrderGeneratorTask(List<Tablet> tablets, int delay) {
+    public RandomOrderGeneratorTask(List<Tablet> tablets, int interval) {
         this.tablets = tablets;
-        this.delay = delay;
+        this.interval = interval;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class RandomOrderGeneratorTask implements Runnable
             tablets.get(number).createTestOrder();
             try
             {
-                Thread.sleep(delay);
+                Thread.sleep(interval);
             }
             catch (InterruptedException e)
             {
