@@ -29,10 +29,11 @@ public class Restaurant
         makarevich.addObserver(waitor);
 
         List<Tablet> tablets = new ArrayList<>(5);
-        for (int i = 1; i <= 5; i++) {
+        OrderManager orderManager = new OrderManager();
+        for (int i = 1; i <= 5; i++)
+        {
             Tablet tablet = new Tablet(i);
-            tablet.addObserver(amigo);
-            tablet.addObserver(makarevich);
+            tablet.addObserver(orderManager);
             tablets.add(tablet);
         }
 

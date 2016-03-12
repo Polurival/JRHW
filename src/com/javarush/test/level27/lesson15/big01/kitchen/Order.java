@@ -4,7 +4,6 @@ import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level27.lesson15.big01.Tablet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +19,11 @@ public class Order
     {
         this.tablet = tablet;
         initDishes();
+    }
+
+    public Tablet getTablet()
+    {
+        return tablet;
     }
 
     public List<Dish> getDishes()
@@ -42,7 +46,8 @@ public class Order
         return dishes.isEmpty();
     }
 
-    protected void initDishes() throws IOException {
+    protected void initDishes() throws IOException
+    {
         this.dishes = ConsoleHelper.getAllDishesForOrder();
     }
 

@@ -5,13 +5,12 @@ import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 import com.javarush.test.level27.lesson15.big01.statistic.event.CookedOrderEventDataRow;
 
 import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Created by
  * Polurival on 04.03.2016.
  */
-public class Cook extends Observable implements Observer
+public class Cook extends Observable
 {
     private final String name;
 
@@ -26,16 +25,13 @@ public class Cook extends Observable implements Observer
         return name;
     }
 
-    @Override
-    public void update(Observable tablet, Object arg)
+    public void startCookingOrder(Order order)
     {
-        Order order = (Order) arg;
-
         ConsoleHelper.writeMessage("Start cooking - " + order +
                 ", cooking time " + order.getTotalCookingTime() + "min");
 
         CookedOrderEventDataRow eventDataRow =
-                new CookedOrderEventDataRow(tablet.toString(), name, order.getTotalCookingTime() * 60, order.getDishes());
+                new CookedOrderEventDataRow(order.getTablet().toString(), name, order.getTotalCookingTime() * 60, order.getDishes());
         StatisticEventManager.getInstance().register(eventDataRow);
 
         setChanged();

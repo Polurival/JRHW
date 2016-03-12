@@ -43,7 +43,8 @@ public class DirectorTablet
     public void printActiveVideoSet()
     {
         List<Advertisement> activeVideoSet = StatisticAdvertisementManager.getInstance().getVideoSet(true);
-        for (Advertisement ad : activeVideoSet) {
+        for (Advertisement ad : activeVideoSet)
+        {
             ConsoleHelper.writeMessage(ad.getName() + " - " + ad.getHits());
         }
     }
@@ -51,7 +52,8 @@ public class DirectorTablet
     public void printArchivedVideoSet()
     {
         List<Advertisement> activeVideoSet = StatisticAdvertisementManager.getInstance().getVideoSet(false);
-        for (Advertisement ad : activeVideoSet) {
+        for (Advertisement ad : activeVideoSet)
+        {
             ConsoleHelper.writeMessage(ad.getName());
         }
     }

@@ -38,7 +38,8 @@ public class Tablet extends Observable
         }
     }
 
-    public void createTestOrder() {
+    public void createTestOrder()
+    {
         try
         {
             TestOrder order = new TestOrder(this);
