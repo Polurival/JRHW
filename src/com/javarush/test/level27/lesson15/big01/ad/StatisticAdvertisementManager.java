@@ -24,13 +24,17 @@ public class StatisticAdvertisementManager
     {
     }
 
-    public List<Advertisement> getVideoSet(boolean isActive) {
+    public List<Advertisement> getVideoSet(boolean isActive)
+    {
         List<Advertisement> videoSet = new ArrayList<>();
-        for (Advertisement ad : advertisementStorage.list()) {
-            if (!isActive && ad.getHits() == 0) {
+        for (Advertisement ad : advertisementStorage.list())
+        {
+            if (!isActive && ad.getHits() == 0)
+            {
                 videoSet.add(ad);
             }
-            if (isActive && ad.getHits() != 0) {
+            if (isActive && ad.getHits() != 0)
+            {
                 videoSet.add(ad);
             }
         }

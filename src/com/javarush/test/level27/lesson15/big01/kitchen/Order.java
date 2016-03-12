@@ -4,6 +4,7 @@ import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level27.lesson15.big01.Tablet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,12 +14,12 @@ import java.util.List;
 public class Order
 {
     private Tablet tablet;
-    private List<Dish> dishes;
+    protected List<Dish> dishes;
 
     public Order(Tablet tablet) throws IOException
     {
         this.tablet = tablet;
-        this.dishes = ConsoleHelper.getAllDishesForOrder();
+        initDishes();
     }
 
     public List<Dish> getDishes()
@@ -39,6 +40,10 @@ public class Order
     public boolean isEmpty()
     {
         return dishes.isEmpty();
+    }
+
+    protected void initDishes() throws IOException {
+        this.dishes = ConsoleHelper.getAllDishesForOrder();
     }
 
     @Override
