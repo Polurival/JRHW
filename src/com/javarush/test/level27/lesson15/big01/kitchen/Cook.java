@@ -14,6 +14,13 @@ public class Cook extends Observable
 {
     private final String name;
 
+    private boolean busy;
+
+    public boolean isBusy()
+    {
+        return busy;
+    }
+
     public Cook(String name)
     {
         this.name = name;
@@ -27,6 +34,14 @@ public class Cook extends Observable
 
     public void startCookingOrder(Order order)
     {
+        busy = true;
+        try
+        {
+            Thread.sleep(10 * order.getTotalCookingTime());
+        }
+        catch (InterruptedException e)
+        {
+        }
         ConsoleHelper.writeMessage("Start cooking - " + order +
                 ", cooking time " + order.getTotalCookingTime() + "min");
 
@@ -36,5 +51,6 @@ public class Cook extends Observable
 
         setChanged();
         notifyObservers(order);
+        busy = false;
     }
 }

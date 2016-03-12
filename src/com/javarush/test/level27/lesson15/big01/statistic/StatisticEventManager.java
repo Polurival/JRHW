@@ -42,15 +42,20 @@ public class StatisticEventManager
 
     private static StatisticEventManager instance = new StatisticEventManager();
 
-    private Set<Cook> cooks = new HashSet<Cook>();
+    public static StatisticEventManager getInstance()
+    {
+        return instance;
+    }
 
     private StatisticEventManager()
     {
     }
 
-    public static StatisticEventManager getInstance()
+    private Set<Cook> cooks = new HashSet<>();
+
+    public Set<Cook> getCooks()
     {
-        return instance;
+        return cooks;
     }
 
     public void register(EventDataRow data)
@@ -69,7 +74,7 @@ public class StatisticEventManager
         Map<EventType, List<EventDataRow>> storageMap = statisticStorage.getData();
         List<EventDataRow> list = storageMap.get(EventType.SELECTED_VIDEOS);
 
-        Map<String, Double> map = new TreeMap<String, Double>(Collections.reverseOrder());
+        Map<String, Double> map = new TreeMap<>(Collections.reverseOrder());
 
         for (EventDataRow event : list)
         {
@@ -94,7 +99,7 @@ public class StatisticEventManager
         Map<EventType, List<EventDataRow>> storageMap = statisticStorage.getData();
         List<EventDataRow> list = storageMap.get(EventType.COOKED_ORDER);
 
-        Map<String, Map<String, Integer>> map = new TreeMap<String, Map<String, Integer>>(Collections.reverseOrder());
+        Map<String, Map<String, Integer>> map = new TreeMap<>(Collections.reverseOrder());
 
         for (EventDataRow event : list)
         {
@@ -117,7 +122,7 @@ public class StatisticEventManager
                 map.put(date, temp);
             } else
             {
-                Map<String, Integer> temp = new TreeMap<String, Integer>();
+                Map<String, Integer> temp = new TreeMap<>();
                 temp.put(cookName, cookingTimeMin);
                 map.put(date, temp);
             }
