@@ -107,9 +107,11 @@ public class StatisticManager
             if (map.containsKey(date))
             {
                 Map<String, Integer> temp = map.get(date);
-                if (temp.containsKey(cookName)) {
+                if (temp.containsKey(cookName))
+                {
                     temp.put(cookName, temp.get(cookName) + cookingTimeMin);
-                } else {
+                } else
+                {
                     temp.put(cookName, cookingTimeMin);
                 }
                 map.put(date, temp);
