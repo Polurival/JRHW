@@ -12,7 +12,7 @@ public enum Dish
     Juice(5),
     Water(3);
 
-    private int duration;
+    private final int duration;
 
     Dish(int duration)
     {
@@ -26,6 +26,10 @@ public enum Dish
 
     public static String allDishesToString()
     {
+        if (Dish.values().length == 0)
+        {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         for (Dish dish : Dish.values())
         {

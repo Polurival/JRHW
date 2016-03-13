@@ -1,8 +1,8 @@
 package com.javarush.test.level27.lesson15.big01.kitchen;
 
+import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
 import com.javarush.test.level27.lesson15.big01.statistic.event.CookedOrderEventDataRow;
-import com.javarush.test.level27.lesson15.big01.statistic.event.EventDataRow;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -13,7 +13,7 @@ import java.util.Observer;
  */
 public class Cook extends Observable implements Observer
 {
-    private String name;
+    private final String name;
 
     public Cook(String name)
     {
@@ -31,10 +31,10 @@ public class Cook extends Observable implements Observer
     {
         Order order = (Order) arg;
 
-        System.out.println("Start cooking - " + order.toString() +
+        ConsoleHelper.writeMessage("Start cooking - " + order +
                 ", cooking time " + order.getTotalCookingTime() + "min");
 
-        EventDataRow eventDataRow =
+        CookedOrderEventDataRow eventDataRow =
                 new CookedOrderEventDataRow(tablet.toString(), name, order.getTotalCookingTime() * 60, order.getDishes());
         StatisticManager.getInstance().register(eventDataRow);
 

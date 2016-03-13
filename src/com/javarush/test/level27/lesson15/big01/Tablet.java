@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class Tablet extends Observable
 {
-    private final static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
+    public static Logger logger = Logger.getLogger(Tablet.class.getName());
 
     private final int number;
 
@@ -26,23 +26,22 @@ public class Tablet extends Observable
 
     public void createOrder()
     {
-
         try
         {
-            final Order order = new Order(this);
-            if (!order.isEmpty())
+            Order order = new Order(this);
+            ConsoleHelper.writeMessage(order.toString());
+            AdvertisementManager advertisementManager = new AdvertisementManager(order.getTotalCookingTime() * 60);
+            try
             {
-                ConsoleHelper.writeMessage(order.toString());
-                try
-                {
-                    new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
-                }
-                catch (NoVideoAvailableException e) {
-                    logger.log(Level.INFO, "No video is available for the order " + order);
-                }
-                setChanged();
-                notifyObservers(order);
+                advertisementManager.processVideos();
             }
+            catch (NoVideoAvailableException e)
+            {
+                logger.log(Level.INFO, "No video is available for the order " + order);
+            }
+            setChanged();
+            notifyObservers(order);
+
         }
         catch (IOException e)
         {
@@ -53,8 +52,6 @@ public class Tablet extends Observable
     @Override
     public String toString()
     {
-        return "Tablet{" +
-                "number=" + number +
-                '}';
+        return "of Tablet{number=" + number + "}";
     }
 }
