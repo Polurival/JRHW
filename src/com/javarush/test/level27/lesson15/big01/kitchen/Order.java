@@ -47,9 +47,7 @@ public class Order
         if (dishes.isEmpty())
         {
             return "";
-        } else
-        {
-            return "Your order: " + dishes.toString() + " of " + tablet.toString();
         }
+        return "Your order: " + dishes + " " + tablet;
     }
 }

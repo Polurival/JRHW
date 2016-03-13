@@ -11,18 +11,18 @@ import java.util.List;
  */
 public class CookedOrderEventDataRow implements EventDataRow
 {
-    private String tabletName;
     private String cookName;
     private int cookingTimeSeconds;
-    private List<Dish> cookingDishs;
+    private List<Dish> cookingDishes;
+    private String tabletName;
     private Date currentDate;
 
-    public CookedOrderEventDataRow(String tabletName, String cookName, int cookingTimeSeconds, List<Dish> cookingDishs)
+    public CookedOrderEventDataRow(String tabletName, String cookName, int cookingTimeSeconds, List<Dish> cookingDishes)
     {
         this.tabletName = tabletName;
         this.cookName = cookName;
         this.cookingTimeSeconds = cookingTimeSeconds;
-        this.cookingDishs = cookingDishs;
+        this.cookingDishes = cookingDishes;
         currentDate = new Date();
     }
 
@@ -38,14 +38,14 @@ public class CookedOrderEventDataRow implements EventDataRow
         return currentDate;
     }
 
-    public String getCookName()
-    {
-        return cookName;
-    }
-
     @Override
     public int getTime()
     {
         return cookingTimeSeconds;
+    }
+
+    public String getCookName()
+    {
+        return cookName;
     }
 }

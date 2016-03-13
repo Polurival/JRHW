@@ -51,6 +51,7 @@ public class Advertisement
                 amountPerOneDisplaying += initialAmount % amountPerOneDisplaying;
             }
             hits--;
+            initialAmount -= amountPerOneDisplaying;
         }
     }
 }

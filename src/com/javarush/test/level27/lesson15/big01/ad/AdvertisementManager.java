@@ -14,128 +14,124 @@ import java.util.*;
 public class AdvertisementManager
 {
     private final AdvertisementStorage storage = AdvertisementStorage.getInstance();
-
     private int timeSeconds;
 
-    public AdvertisementManager(int timeSeconds)
-    {
+    public AdvertisementManager(int timeSeconds) {
         this.timeSeconds = timeSeconds;
     }
 
-    public void processVideos()
-    {
-        if (storage.list().isEmpty()) {
-            throw new NoVideoAvailableException();
+    public void processVideos() throws NoVideoAvailableException {
+        List<Advertisement> list = getListForWatching();
+        StatisticManager.getInstance().
+                register(new VideoSelectedEventDataRow(list, getTotalMoney(list), getTotalDuration(list)));
+        for (Advertisement adv : list) {
+            ConsoleHelper.writeMessage(String.format("%s is displaying... %d, %d",
+                    adv.getName(),
+                    adv.getAmountPerOneDisplaying(),
+                    adv.getAmountPerOneDisplaying() * 1000 / adv.getDuration()));
+            adv.revalidate();
         }
+    }
 
-        List<Advertisement> bestList = chooseBestList(powerList(storage.list()));
-        if (bestList.isEmpty()) {
-            throw new NoVideoAvailableException();
-        }
+    private List<Advertisement> getListForWatching() throws NoVideoAvailableException {
 
-        Collections.sort(bestList, new Comparator<Advertisement>()
-        {
+        Comparator<Advertisement> advertisementComparator = new Comparator<Advertisement>() {
             @Override
-            public int compare(Advertisement a1, Advertisement a2)
-            {
-                int result = Long.compare(a2.getAmountPerOneDisplaying(), a1.getAmountPerOneDisplaying());
-                if (result != 0) return result;
-
-                long oneSecondCost1 = a1.getAmountPerOneDisplaying() * 1000 / a1.getDuration();
-                long oneSecondCost2 = a2.getAmountPerOneDisplaying() * 1000 / a2.getDuration();
-
-                return Long.compare(oneSecondCost1, oneSecondCost2);
+            public int compare(Advertisement o1, Advertisement o2) {
+                long sum1 = o1.getAmountPerOneDisplaying();
+                long sum2 = o2.getAmountPerOneDisplaying();
+                if (o1.getAmountPerOneDisplaying() != o2.getAmountPerOneDisplaying())
+                    return Long.compare(sum2, sum1);
+                else {
+                    long sumSec1 = o1.getDuration() != 0 ? sum1 * 1000 / o1.getDuration() : 0L;
+                    long sumSec2 = o2.getDuration() != 0 ? sum2 * 1000 / o2.getDuration() : 0L;
+                    return Long.compare(sumSec1, sumSec2);
+                }
             }
-        });
+        };
+        int count = 0;
+        List<Advertisement> sourceList = storage.list();
+        for (Advertisement advertisement : sourceList) {
+            if (advertisement.getHits() <= 0)
+                count++;
+        }
+        if (count == sourceList.size()) throw new NoVideoAvailableException();
 
-        int amount = 0;
+        List<Advertisement> bestList = filterList(sourceList);
+        Collections.sort(bestList, advertisementComparator);
+        return bestList;
+    }
+
+    private List<Advertisement> filterList(List<Advertisement> list) throws NoVideoAvailableException {
+        //filter the source list;
+        List<Advertisement> correctList = new ArrayList<>(list.size());
+        for (Advertisement adv : list) {
+            if (adv.getHits() > 0 && adv.getDuration() <= timeSeconds)
+                correctList.add(adv);
+        }
+
+        if (correctList.isEmpty()) throw new NoVideoAvailableException();
+        //Create comparator ;
+        Comparator<List<Advertisement>> bestListComparator = new Comparator<List<Advertisement>>() {
+            @Override
+            public int compare(List<Advertisement> o1, List<Advertisement> o2) {
+                if (getTotalMoney(o1) != getTotalMoney(o2))
+                    return Long.compare(getTotalMoney(o2), getTotalMoney(o1));
+                else if (getTotalDuration(o1) != getTotalDuration(o2))
+                    return Integer.compare(getTotalDuration(o2), getTotalDuration(o1));
+                else return Integer.compare(o1.size(), o2.size());
+            }
+        };
+
+        int initialCapacity = (int) Math.pow(2, correctList.size() / 2);
+
+        return getBestList(correctList, new BitSet(), 0,
+                new PriorityQueue<>(initialCapacity, bestListComparator)).peek();
+    }
+
+
+    private PriorityQueue<List<Advertisement>> getBestList(final List<Advertisement> sourceList, final BitSet bitSet,
+                                                           int j, final PriorityQueue<List<Advertisement>> queue) {
+        //condition for end of recursion;
+        if (j == sourceList.size())
+            return queue;
+
+        else {
+            //Algorithm from Knuth for code gray generation;
+            List<Advertisement> list = putToList(sourceList, bitSet);
+            if (getTotalDuration(list) <= timeSeconds)
+                queue.add(list);
+
+            bitSet.flip(sourceList.size());
+
+            if (bitSet.get(sourceList.size()))
+                j = 0;
+            else j = bitSet.nextSetBit(0) + 1;
+            bitSet.flip(j);
+
+            return getBestList(sourceList, bitSet, j, queue);
+        }
+    }
+
+
+    private int getTotalDuration(List<Advertisement> o1) {
         int totalDuration = 0;
-        for (Advertisement a : bestList)
-        {
-            amount += a.getAmountPerOneDisplaying();
-            totalDuration += a.getDuration();
-        }
-        EventDataRow eventDataRow = new VideoSelectedEventDataRow(bestList, amount, totalDuration);
-        StatisticManager.getInstance().register(eventDataRow);
-
-        for (Advertisement a : bestList)
-        {
-            ConsoleHelper.writeMessage(a.getName() + " is displaying... "
-                    + a.getAmountPerOneDisplaying() + ", "
-                    + a.getAmountPerOneDisplaying() * 1000 / a.getDuration());
-
-            a.revalidate();
-        }
+        for (Advertisement adv : o1) totalDuration += adv.getDuration();
+        return totalDuration;
     }
 
-    private List<Advertisement> chooseBestList(List<List<Advertisement>> allCombinations)
-    {
-        Iterator iterator = allCombinations.iterator();
-        while (iterator.hasNext()) {
-            List<Advertisement> list = (List<Advertisement>) iterator.next();
-            int totalDuration = 0;
-            boolean removed = false;
-            for (Advertisement ad : list) {
-                totalDuration += ad.getDuration();
-                if (ad.getHits() < 1) {
-                    removed = true;
-                    iterator.remove();
-                    break;
-                }
-            }
-            if (!removed) {
-                if (totalDuration > timeSeconds) {
-                    iterator.remove();
-                }
-            }
-        }
-
-        Collections.sort(allCombinations, new Comparator<List<Advertisement>>()
-        {
-            @Override
-            public int compare(List<Advertisement> o1, List<Advertisement> o2)
-            {
-                long sumA1 = 0;
-                long sumA2 = 0;
-                int durA1 = 0;
-                int durA2 = 0;
-                for (Advertisement a1 : o1) {
-                    sumA1 += a1.getAmountPerOneDisplaying();
-                    durA1 += a1.getDuration();
-                }
-                for (Advertisement a2 : o2) {
-                    sumA2 += a2.getAmountPerOneDisplaying();
-                    durA2 += a2.getDuration();
-                }
-                if (sumA1 != sumA2) {
-                    return Long.compare(sumA2, sumA1);
-                }
-                if (durA1 != durA2) {
-                    return Integer.compare(durA2, durA1);
-                }
-                return Integer.compare(o1.size(), o2.size());
-            }
-        });
-
-        return allCombinations.size() != 0 ? allCombinations.get(0) : new ArrayList<Advertisement>();
+    private long getTotalMoney(List<Advertisement> o1) {
+        long sum = 0L;
+        for (Advertisement adv : o1) sum += adv.getAmountPerOneDisplaying();
+        return sum;
     }
 
-    private <Advertisement> List<List<Advertisement>> powerList(List<Advertisement> originalList) {
-        List<List<Advertisement>> lists = new ArrayList<List<Advertisement>>();
-        if (originalList.isEmpty()) {
-            lists.add(new ArrayList<Advertisement>());
-            return lists;
+    private List<Advertisement> putToList(final List<Advertisement> sourceList, final BitSet bitSet) {
+        List<Advertisement> list = new ArrayList<>();
+        for (int i = 0; i < sourceList.size(); ++i) {
+            if (bitSet.get(i))
+                list.add(sourceList.get(i));
         }
-        List<Advertisement> list = new ArrayList<Advertisement>(originalList);
-        Advertisement head = list.get(0);
-        List<Advertisement> rest = new ArrayList<Advertisement>(list.subList(1, list.size()));
-        for (List<Advertisement> l : powerList(rest)) {
-            List<Advertisement> newList = new ArrayList<Advertisement>();
-            newList.add(head);
-            newList.addAll(l);
-            lists.add(newList);
-            lists.add(l);
-        }
-        return lists;
+        return list;
     }
 }
