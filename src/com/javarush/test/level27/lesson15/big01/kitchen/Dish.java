@@ -26,7 +26,8 @@ public enum Dish
 
     public static String allDishesToString()
     {
-        if (Dish.values().length == 0) {
+        if (Dish.values().length == 0)
+        {
             return "";
         }
         StringBuilder sb = new StringBuilder();
