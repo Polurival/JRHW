@@ -3,4 +3,4 @@ out
 target
 *.iml
 log
-src/JavaRushPlugin.properties
+*Plugin.properties
