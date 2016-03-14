@@ -13,7 +13,7 @@ import java.util.*;
  * Created by
  * Polurival on 08.03.2016.
  */
-public class StatisticManager
+public class StatisticEventManager
 {
     private class StatisticStorage
     {
@@ -40,15 +40,15 @@ public class StatisticManager
 
     private StatisticStorage statisticStorage = new StatisticStorage();
 
-    private static StatisticManager instance = new StatisticManager();
+    private static StatisticEventManager instance = new StatisticEventManager();
 
     private Set<Cook> cooks = new HashSet<Cook>();
 
-    private StatisticManager()
+    private StatisticEventManager()
     {
     }
 
-    public static StatisticManager getInstance()
+    public static StatisticEventManager getInstance()
     {
         return instance;
     }

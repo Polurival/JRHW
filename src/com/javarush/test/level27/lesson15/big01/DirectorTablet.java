@@ -1,7 +1,10 @@
 package com.javarush.test.level27.lesson15.big01;
 
-import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.ad.Advertisement;
+import com.javarush.test.level27.lesson15.big01.ad.StatisticAdvertisementManager;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,7 +15,7 @@ public class DirectorTablet
 {
     public void printAdvertisementProfit()
     {
-        Map<String, Double> map = StatisticManager.getInstance().getStatisticForShownAdvertisement();
+        Map<String, Double> map = StatisticEventManager.getInstance().getStatisticForShownAdvertisement();
         double totalAmount = 0;
 
         for (Map.Entry<String, Double> entry : map.entrySet())
@@ -25,7 +28,7 @@ public class DirectorTablet
 
     public void printCookWorkloading()
     {
-        Map<String, Map<String, Integer>> map = StatisticManager.getInstance().getStatisticForCooks();
+        Map<String, Map<String, Integer>> map = StatisticEventManager.getInstance().getStatisticForCooks();
 
         for (Map.Entry<String, Map<String, Integer>> entry1 : map.entrySet())
         {
@@ -39,11 +42,17 @@ public class DirectorTablet
 
     public void printActiveVideoSet()
     {
-
+        List<Advertisement> activeVideoSet = StatisticAdvertisementManager.getInstance().getVideoSet(true);
+        for (Advertisement ad : activeVideoSet) {
+            ConsoleHelper.writeMessage(ad.getName() + " - " + ad.getHits());
+        }
     }
 
     public void printArchivedVideoSet()
     {
-
+        List<Advertisement> activeVideoSet = StatisticAdvertisementManager.getInstance().getVideoSet(false);
+        for (Advertisement ad : activeVideoSet) {
+            ConsoleHelper.writeMessage(ad.getName());
+        }
     }
 }
