@@ -2,6 +2,7 @@ package com.javarush.test.level28.lesson15.big01.model;
 
 import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class Provider
         this.strategy = strategy;
     }
 
-    public List<Vacancy> getJavaVacancies(String searchString)
+    public List<Vacancy> getJavaVacancies(String searchString) throws IOException
     {
         List<Vacancy> vacancies = strategy.getVacancies(searchString);
         return vacancies;
