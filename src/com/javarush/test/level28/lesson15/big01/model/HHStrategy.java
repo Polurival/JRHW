@@ -26,7 +26,7 @@ public class HHStrategy implements Strategy
 
         for (int i = 0; ; i++)
         {
-            Document document = getDocument(searchString, i);
+            Document document = getDocument(String.format(URL_FORMAT, searchString, i), i);
             Elements plainVacancies = document.select("[data-qa=\"vacancy-serp__vacancy\"]");
             if (plainVacancies.size() == 0)
             {

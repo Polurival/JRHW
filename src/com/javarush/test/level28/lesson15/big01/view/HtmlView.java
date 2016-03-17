@@ -3,6 +3,7 @@ package com.javarush.test.level28.lesson15.big01.view;
 import com.javarush.test.level28.lesson15.big01.Controller;
 import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -16,12 +17,17 @@ public class HtmlView implements View
     @Override
     public void update(List<Vacancy> vacancies)
     {
-
+        System.out.println(vacancies.size());
     }
 
     @Override
     public void setController(Controller controller)
     {
         this.controller = controller;
+    }
+
+    public void userCitySelectEmulationMethod() throws IOException
+    {
+        controller.onCitySelect("Odessa");
     }
 }

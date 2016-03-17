@@ -1,13 +1,8 @@
 package com.javarush.test.level28.lesson15.big01;
 
 import com.javarush.test.level28.lesson15.big01.model.Model;
-import com.javarush.test.level28.lesson15.big01.model.Provider;
-import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by
