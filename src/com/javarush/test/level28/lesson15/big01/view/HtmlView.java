@@ -14,10 +14,14 @@ public class HtmlView implements View
 {
     private Controller controller;
 
+    private final String filePath =
+            "./src/" + this.getClass().getPackage().getName().replaceAll("\\.", "/") + "/vacancies.html";
+
     @Override
     public void update(List<Vacancy> vacancies)
     {
-        System.out.println(vacancies.size());
+        String fileContent = getUpdatedFileContent(vacancies);
+        updateFile(fileContent);
     }
 
     @Override
@@ -30,4 +34,15 @@ public class HtmlView implements View
     {
         controller.onCitySelect("Odessa");
     }
+
+    private String getUpdatedFileContent(List<Vacancy> vacancies)
+    {
+        return null;
+    }
+
+    private void updateFile(String fileContent)
+    {
+
+    }
+
 }
