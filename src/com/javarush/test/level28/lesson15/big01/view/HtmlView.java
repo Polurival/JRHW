@@ -3,7 +3,7 @@ package com.javarush.test.level28.lesson15.big01.view;
 import com.javarush.test.level28.lesson15.big01.Controller;
 import com.javarush.test.level28.lesson15.big01.vo.Vacancy;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -42,7 +42,17 @@ public class HtmlView implements View
 
     private void updateFile(String fileContent)
     {
-
+        try (FileWriter fileWriter = new FileWriter(filePath))
+        {
+            if (fileContent != null)
+            {
+                fileWriter.write(fileContent);
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }
