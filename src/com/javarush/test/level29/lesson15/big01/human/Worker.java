@@ -1,24 +1,27 @@
 package com.javarush.test.level29.lesson15.big01.human;
 
-public class Worker {
+public class Worker
+{
     private Human human;
     private double salary;
     public String company;
 
     public Worker(String name, int age)
     {
-        human = new Human(false);
+        human = new Human(name, age);
     }
 
-    public void live() {
-        human.live();
+    public void live()
+    {
     }
 
-    public double getSalary() {
+    public double getSalary()
+    {
         return salary;
     }
 
-    public void setSlr(double salary) {
+    public void setSlr(double salary)
+    {
         this.salary = salary;
     }
 }

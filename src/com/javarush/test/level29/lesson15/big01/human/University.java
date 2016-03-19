@@ -1,22 +1,27 @@
 package com.javarush.test.level29.lesson15.big01.human;
 
-public class University extends Student {
+public class University extends Student
+{
 
-    public University(String name, int age) {
+    public University(String name, int age)
+    {
         super(name, age, 0);
     }
 
-    public Student getStudentWithAverageGrade() {
+    public Student getStudentWithAverageGrade()
+    {
         //TODO:
         return null;
     }
 
-    public Student getStudentWithMaxAverageGrade(double averageGrade) {
+    public Student getStudentWithMaxAverageGrade(double averageGrade)
+    {
         //TODO:
         return null;
     }
 
-    public void getStudentWithMinAverageGradeAndExpel() {
+    public void getStudentWithMinAverageGradeAndExpel()
+    {
         //TODO:
     }
 }

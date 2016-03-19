@@ -2,35 +2,40 @@ package com.javarush.test.level29.lesson15.big01.human;
 
 import java.util.Date;
 
-public class Student extends Human {
+public class Student extends Human
+{
     private double averageGrade;
     private String university;
     private Date beginningOfSession;
     private Date endOfSession;
 
-    public Student(String name, int age, double averageGrade) {
-        super(false);
-        this.name = name;
-        this.age = age;
+    public Student(String name, int age, double averageGrade)
+    {
+        super(name, age);
         this.averageGrade = averageGrade;
     }
 
-    public void live() {
+    public void live()
+    {
         learn();
     }
 
-    public void learn() {
+    public void learn()
+    {
     }
 
-    public String getUniversity() {
+    public String getUniversity()
+    {
         return university;
     }
 
-    public void setUniversity(String university) {
+    public void setUniversity(String university)
+    {
         this.university = university;
     }
 
-    public void printData() {
+    public void printData()
+    {
         System.out.println("Студент: " + name);
     }
 
@@ -44,26 +49,32 @@ public class Student extends Human {
         averageGrade += 0.2;
     }
 
-    public void setValue(String name, double value) {
-        if (name.equals("averageGrade")) {
+    public void setValue(String name, double value)
+    {
+        if (name.equals("averageGrade"))
+        {
             averageGrade = value;
             return;
         }
-        if (name.equals("course")) {
-            course = (int)value;
+        if (name.equals("course"))
+        {
+            course = (int) value;
             return;
         }
     }
-    
-    public void setBeginningOfSession(int day, int month, int year) {
+
+    public void setBeginningOfSession(int day, int month, int year)
+    {
         beginningOfSession = new Date(year, month, day);
     }
 
-    public void setEndOfSession(int day, int month, int year) {
+    public void setEndOfSession(int day, int month, int year)
+    {
         endOfSession = new Date(year, month, day);
     }
 
-    public double getAverageGrade() {
+    public double getAverageGrade()
+    {
         return averageGrade;
     }
 }
