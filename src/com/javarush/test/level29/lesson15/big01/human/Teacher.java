@@ -1,9 +1,8 @@
 package com.javarush.test.level29.lesson15.big01.human;
 
-public class Teacher extends Human
+public class Teacher extends UniversityPerson
 {
     private int numberOfStudents;
-    private String university;
 
     public Teacher(String name, int age, int numberOfStudents)
     {
@@ -18,16 +17,6 @@ public class Teacher extends Human
 
     public void teach()
     {
-    }
-
-    public String getUniversity()
-    {
-        return university;
-    }
-
-    public void setUniversity(String university)
-    {
-        this.university = university;
     }
 
     public void printData()
