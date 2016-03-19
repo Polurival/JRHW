@@ -24,14 +24,9 @@ public class Student extends UniversityPerson
     {
     }
 
-    public void incAverageGradeBy01()
+    public void incAverageGrade(double delta)
     {
-        averageGrade += 0.1;
-    }
-
-    public void incAverageGradeBy02()
-    {
-        averageGrade += 0.2;
+        averageGrade += delta;
     }
 
     public void setAverageGrade(double averageGrade)
@@ -44,14 +39,14 @@ public class Student extends UniversityPerson
         this.course = course;
     }
 
-    public void setBeginningOfSession(int day, int month, int year)
+    public void setBeginningOfSession(Date date)
     {
-        beginningOfSession = new Date(year, month, day);
+        beginningOfSession = date;
     }
 
-    public void setEndOfSession(int day, int month, int year)
+    public void setEndOfSession(Date date)
     {
-        endOfSession = new Date(year, month, day);
+        endOfSession = date;
     }
 
     public double getAverageGrade()
