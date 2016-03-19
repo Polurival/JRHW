@@ -51,7 +51,8 @@ public class MoikrugStrategy implements Strategy
                 }
 
                 Elements cities = rawVacancy.select(".location");
-                if (cities.size() > 0) {
+                if (cities.size() > 0)
+                {
                     vacancy.setCity(cities.first().text());
                 } else
                 {
