@@ -27,37 +27,37 @@ public class Car
 
     public static Car create(int type, int numberOfPassengers)
     {
-        if (type == 0) {
-            return new Truck(numberOfPassengers);
+        switch (type)
+        {
+            case TRUCK:
+                return new Truck(numberOfPassengers);
+            case SEDAN:
+                return new Sedan(numberOfPassengers);
+            case CABRIOLET:
+                return new Cabriolet(numberOfPassengers);
+            default:
+                return new Car(type, numberOfPassengers);
         }
-        if (type == 1) {
-            return new Sedan(numberOfPassengers);
-        }
-        if (type == 2) {
-            return new Cabriolet(numberOfPassengers);
-        }
-        return null;
     }
 
-    public int fill(double numberOfLiters)
+    public void fill(double numberOfLiters) throws Exception
     {
         if (numberOfLiters < 0)
-            return -1;
+        {
+            throw new Exception();
+        }
         fuel += numberOfLiters;
-        return 0;
     }
 
-    public double getTripConsumption(Date date, int length, Date SummerStart, Date SummerEnd)
+    public double getTripConsumption(Date date, int length, Date summerStart, Date summerEnd)
     {
-        double consumption;
-        if (date.before(SummerStart) || date.after(SummerEnd))
+        if (isSummer(date, summerStart, summerEnd))
         {
-            consumption = length * winterFuelConsumption + winterWarmingUp;
+            return getSummerConsumption(length);
         } else
         {
-            consumption = length * summerFuelConsumption;
+            return getWinterConsumption(length);
         }
-        return consumption;
     }
 
     public int getNumberOfPassengersCanBeTransferred()
@@ -107,5 +107,20 @@ public class Car
         if (type == SEDAN)
             return 120;
         return 90;
+    }
+
+    public boolean isSummer(Date date, Date summerStart, Date summerEnd)
+    {
+        return date.after(summerStart) && date.before(summerEnd);
+    }
+
+    public double getWinterConsumption(int length)
+    {
+        return winterFuelConsumption * length + winterWarmingUp;
+    }
+
+    public double getSummerConsumption(int length)
+    {
+        return summerFuelConsumption * length;
     }
 }
