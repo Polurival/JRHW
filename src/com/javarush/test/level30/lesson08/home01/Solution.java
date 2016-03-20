@@ -5,8 +5,10 @@ package com.javarush.test.level30.lesson08.home01;
 Можно использовать только операции 1)исключающее или, 2) присваивание
 Не оставляйте комментарии, не меняйте остальной код
 */
-public class Solution {
-    public static void main(String[] args) {
+public class Solution
+{
+    public static void main(String[] args)
+    {
         /* expected output
         x=4, y=5
         x=5, y=4
