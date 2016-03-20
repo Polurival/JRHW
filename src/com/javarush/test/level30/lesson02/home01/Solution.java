@@ -1,5 +1,7 @@
 package com.javarush.test.level30.lesson02.home01;
 
+import java.math.BigInteger;
+
 /* Конвертер систем счислений
 Реализуйте логику метода convertNumberToOtherNumerationSystem, который должен переводить число number.getDigit()
 из одной системы счисления(numerationSystem) в другую (expectedNumerationSystem)
@@ -18,7 +20,6 @@ public class Solution
 
     public static Number convertNumberToOtherNumerationSystem(Number number, NumerationSystem expectedNumerationSystem)
     {
-
         String value = number.getDigit();
         int valueBase = number.getNumerationSystem().getNumerationSystemIntValue();
         if (value.contains("-") || value.contains(".") || value.contains(String.valueOf(valueBase)))
@@ -26,7 +27,7 @@ public class Solution
             throw new NumberFormatException();
         }
         int expectedBase = expectedNumerationSystem.getNumerationSystemIntValue();
-        String result = Long.toString(Long.valueOf(value, valueBase), expectedBase);
+        String result = new BigInteger(value, valueBase).toString(expectedBase);
         return new Number(expectedNumerationSystem, result);
     }
 }
