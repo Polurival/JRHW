@@ -7,23 +7,19 @@ package com.javarush.test.level30.lesson08.task01;
 Используйте только операции: 1)побитовые сдвиги, 2) присваивание, 3) побитовое ИЛИ
 Не оставляйте комментарии
 */
-public class Solution
-{
-    public static void main(String[] args)
-    {
+public class Solution {
+    public static void main(String[] args) {
         System.out.println(maxPowerOf2(140_000));   //131072
         System.out.println(maxPowerOf2(1026));      //1024
         System.out.println(maxPowerOf2(17));        //16
     }
 
-    public static int maxPowerOf2(int x)
-    {
-        int y = 2;
-        while (x > y)
-        {
-            y <<= 1;
-        }
-        y >>= 1;
-        return y;
+    public static int maxPowerOf2(int x) {
+        x |= (x >>  1);
+        x |= (x >>  2);
+        x |= (x >>  4);
+        x |= (x >>  8);
+        x |= (x >> 16);
+        return x - (x >>> 1);
     }
 }
