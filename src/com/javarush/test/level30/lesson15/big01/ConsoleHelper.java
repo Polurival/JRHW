@@ -30,7 +30,7 @@ public class ConsoleHelper
             }
             catch (IOException e)
             {
-                System.out.println("Произошла ошибка при попытке ввода текста. Попробуйте еще раз.");
+                writeMessage("Произошла ошибка при попытке ввода текста. Попробуйте еще раз.");
             }
         }
         return str;
@@ -49,7 +49,7 @@ public class ConsoleHelper
             }
             catch (NumberFormatException e)
             {
-                System.out.println("Произошла ошибка при попытке ввода числа. Попробуйте еще раз.");
+                writeMessage("Произошла ошибка при попытке ввода числа. Попробуйте еще раз.");
             }
         }
         return number;

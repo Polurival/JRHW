@@ -3,6 +3,8 @@ package com.javarush.test.level30.lesson15.big01;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by
@@ -10,6 +12,8 @@ import java.net.Socket;
  */
 public class Server
 {
+    private static Map<String, Connection> connectionMap = new ConcurrentHashMap<>();
+
     private static class Handler extends Thread
     {
         private Socket socket;
@@ -35,8 +39,23 @@ public class Server
         }
         catch (IOException e)
         {
-            System.out.println(e.getMessage());
+            ConsoleHelper.writeMessage(e.getMessage());
         }
 
+    }
+
+    public static void sendBroadcastMessage(Message message)
+    {
+        for (Connection connection : connectionMap.values())
+        {
+            try
+            {
+                connection.send(message);
+            }
+            catch (IOException e)
+            {
+                ConsoleHelper.writeMessage("Message sending error");
+            }
+        }
     }
 }
