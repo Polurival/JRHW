@@ -19,14 +19,13 @@ public class ConsoleHelper
 
     public static String readString()
     {
-        String str = null;
-        boolean isValid = false;
-        while (!isValid)
+        String str;
+        while (true)
         {
             try
             {
                 str = reader.readLine();
-                isValid = true;
+                break;
             }
             catch (IOException e)
             {
@@ -38,14 +37,13 @@ public class ConsoleHelper
 
     public static int readInt()
     {
-        int number = 0;
-        boolean isValid = false;
-        while (!isValid)
+        int number;
+        while (true)
         {
             try
             {
                 number = Integer.valueOf(readString());
-                isValid = true;
+                break;
             }
             catch (NumberFormatException e)
             {
