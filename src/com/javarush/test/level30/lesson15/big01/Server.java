@@ -23,6 +23,30 @@ public class Server
             this.socket = socket;
         }
 
+        @Override
+        public void run()
+        {
+            String userName = null;
+            ConsoleHelper.writeMessage(("Just connected to " + socket.getRemoteSocketAddress()));
+            try (Connection connection = new Connection(socket))
+            {
+                userName = serverHandshake(connection);
+                sendBroadcastMessage(new Message(MessageType.USER_ADDED, userName));
+                sendListOfUsers(connection, userName);
+                serverMainLoop(connection, userName);
+                ConsoleHelper.writeMessage("Connection with remote address has been closed");
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+                ConsoleHelper.writeMessage("Remote address connection error");
+                if (userName != null && !userName.equals(""))
+                {
+                    connectionMap.remove(userName);
+                    sendBroadcastMessage(new Message(MessageType.USER_REMOVED, userName));
+                }
+            }
+        }
+
         private String serverHandshake(Connection connection) throws IOException, ClassNotFoundException
         {
             String name;
