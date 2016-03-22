@@ -21,6 +21,53 @@ public class Client
 
     }
 
+    public static void main(String[] args)
+    {
+        Client client = new Client();
+        client.run();
+    }
+
+    public void run()
+    {
+        SocketThread socketThread = getSocketThread();
+        socketThread.setDaemon(true);
+        socketThread.start();
+
+        try
+        {
+            synchronized (this)
+            {
+                this.wait();
+            }
+        }
+        catch (InterruptedException e)
+        {
+            ConsoleHelper.writeMessage("Connection has been interrupted");
+            return;
+        }
+
+        if (clientConnected)
+        {
+            ConsoleHelper.writeMessage("Соединение установлено. Для выхода наберите команду 'exit'.");
+        } else
+        {
+            ConsoleHelper.writeMessage("Произошла ошибка во время работы клиента.");
+        }
+        String textMessage;
+        while (clientConnected)
+        {
+            textMessage = ConsoleHelper.readString();
+            if ("exit".equals(textMessage))
+            {
+                break;
+            }
+            if (shouldSentTextFromConsole())
+            {
+                sendTextMessage(textMessage);
+            }
+        }
+    }
+
     protected String getServerAddress()
     {
         return ConsoleHelper.readString();
