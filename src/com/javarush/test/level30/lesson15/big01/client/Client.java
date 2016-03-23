@@ -6,6 +6,7 @@ import com.javarush.test.level30.lesson15.big01.Message;
 import com.javarush.test.level30.lesson15.big01.MessageType;
 
 import java.io.IOException;
+import java.net.Socket;
 
 /**
  * Created by
@@ -30,7 +31,7 @@ public class Client
 
         protected void informAboutDeletingNewUser(String userName)
         {
-            ConsoleHelper.writeMessage("User - " + userName + "logs out");
+            ConsoleHelper.writeMessage("User - " + userName + " logs out");
         }
 
         protected void notifyConnectionStatusChanged(boolean clientConnected)
@@ -39,6 +40,23 @@ public class Client
             synchronized (Client.this)
             {
                 Client.this.notify();
+            }
+        }
+
+        @Override
+        public void run() {
+            String serverAddress = getServerAddress();
+            int serverPort = getServerPort();
+            try
+            {
+                Socket socket = new Socket(serverAddress, serverPort);
+                Client.this.connection = new Connection(socket);
+                clientHandshake();
+                clientMainLoop();
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+                notifyConnectionStatusChanged(false);
             }
         }
 
