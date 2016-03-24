@@ -25,7 +25,8 @@ public class Server
 
         public static void main(String[] args)
         {
-            int port = Integer.valueOf(ConsoleHelper.readString());
+            ConsoleHelper.writeMessage("Enter port for chat's server please");
+            int port = ConsoleHelper.readInt();
             try (ServerSocket serverSocket = new ServerSocket(port))
             {
                 ConsoleHelper.writeMessage("Server is running");

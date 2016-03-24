@@ -44,7 +44,8 @@ public class Client
         }
 
         @Override
-        public void run() {
+        public void run()
+        {
             String serverAddress = getServerAddress();
             int serverPort = getServerPort();
             try
@@ -152,16 +153,19 @@ public class Client
 
     protected String getServerAddress()
     {
+        ConsoleHelper.writeMessage("Enter chat's server host address please");
         return ConsoleHelper.readString();
     }
 
     protected int getServerPort()
     {
+        ConsoleHelper.writeMessage("Enter chat's server port please");
         return ConsoleHelper.readInt();
     }
 
     protected String getUserName()
     {
+        ConsoleHelper.writeMessage("Enter your name please");
         return ConsoleHelper.readString();
     }
 
