@@ -17,14 +17,23 @@ import java.util.*;
 */
 public class Solution
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
+        //Создали файлы (Пункт 1)
         File path = new File(args[0]);
         File resultFileAbsolutePath = new File(args[1]);
-
-        List<File> filesLessThan50kbList = new ArrayList<>();
-        addFilesLessThan50kb(path, filesLessThan50kbList);
-        Collections.sort(filesLessThan50kbList, new Comparator<File>()
+        File allFilesContent = new File(resultFileAbsolutePath.getParent() + "/" + "allFilesContent.txt");
+        //Проверяем директорию на наличее такого файла
+        if (allFilesContent.exists())
+        {
+            allFilesContent.delete();
+        }
+        //Список файлов и дальнейшая обработка
+        ArrayList<File> list = new ArrayList<>();
+        //Удаляем файлы более 50кб (Пункты 2.1 и 2.2)
+        seekMinFiles(path, resultFileAbsolutePath, list);
+        //Сортируем компаратором (Пункт 2.2.1)
+        Collections.sort(list, new Comparator<File>()
         {
             @Override
             public int compare(File o1, File o2)
@@ -32,64 +41,61 @@ public class Solution
                 return o1.getName().compareTo(o2.getName());
             }
         });
-
-        File newFile = new File(resultFileAbsolutePath.getParent() + "/allFilesContent.txt");
-        resultFileAbsolutePath.renameTo(newFile);
-
-        try (FileWriter writer = new FileWriter(newFile, true))
+        //Пишем данные в файл (Пункт 2.2.3)
+        FileOutputStream fileOutputStream = new FileOutputStream(resultFileAbsolutePath);
+        for (int i = 0; i < list.size(); i++)
         {
-            for (File f : filesLessThan50kbList)
+            FileInputStream fileInputStream = new FileInputStream(list.get(i));
+            byte[] buffer = new byte[fileInputStream.available()];
+            fileInputStream.read(buffer);
+            fileOutputStream.write(buffer);
+            if (i == list.size() - 1)
             {
-                try (FileReader reader = new FileReader(f))
-                {
-                    char[] buffer = new char[(int) f.length()];
-                    reader.read(buffer);
-                    String fileContent = new String(buffer);
-                    writer.write(fileContent + "\n");
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-
-        deleteEmptyDirectories(path);
-        int x = 0;
-    }
-
-    private static void addFilesLessThan50kb(File file, List<File> list)
-    {
-        for (File f : file.listFiles())
-        {
-            if (f.isDirectory())
-            {
-                addFilesLessThan50kb(f, list);
-            } else if (f.length() > 50)
-            {
-                f.delete();
+                continue;
             } else
             {
-                list.add(f);
+                fileOutputStream.write("\r".getBytes());
+                fileOutputStream.write("\n".getBytes());
             }
+            fileInputStream.close();
+        }
+        fileOutputStream.close();
+        //ReNameFile (Пункт 2.2.2)
+        resultFileAbsolutePath.renameTo(allFilesContent);
+        //Удаляем пустые директории (Пункт 2.3)
+        delDirect(path);
+    }
+
+    // Методы поиска минимального файла
+    public static void seekMinFiles(File file, File resultFileAbsolutePath, ArrayList<File> list)
+    {
+        if (file.equals(resultFileAbsolutePath))
+        {
+            return;
+        }
+        if (file.isDirectory())
+        {
+            for (File directory : file.listFiles())
+            {
+                seekMinFiles(directory, resultFileAbsolutePath, list);
+            }
+        } else if (file.isFile())
+        {
+            if (file.length() > 50) file.delete();
+            else list.add(file);
         }
     }
 
-    private static void deleteEmptyDirectories(File file)
+    //Удаление пустых папок
+    public static void delDirect(File file)
     {
-        for (File f : file.listFiles())
+        if (file.isDirectory())
         {
-            if (f.isDirectory())
+            for (File direct : file.listFiles())
             {
-                if (f.listFiles().length == 0)
-                {
-                    f.delete();
-                } else
-                {
-                    deleteEmptyDirectories(f);
-                }
+                delDirect(direct);
             }
+            file.delete();
         }
     }
 }
