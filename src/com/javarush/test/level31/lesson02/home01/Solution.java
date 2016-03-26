@@ -17,17 +17,14 @@ import java.util.*;
 */
 public class Solution
 {
-    private static List<File> filesLessThan50kbList = new ArrayList<>();
-
     public static void main(String[] args)
     {
-        String path = args[0];
-        String resultFileAbsolutePath = args[1];
+        File path = new File(args[0]);
+        File resultFileAbsolutePath = new File(args[1]);
 
-        File file = new File(path);
-        addFilesLessThan50kb(file);
-        List<File> files = filesLessThan50kbList;
-        Collections.sort(files, new Comparator<File>()
+        List<File> filesLessThan50kbList = new ArrayList<>();
+        addFilesLessThan50kb(path, filesLessThan50kbList);
+        Collections.sort(filesLessThan50kbList, new Comparator<File>()
         {
             @Override
             public int compare(File o1, File o2)
@@ -35,11 +32,13 @@ public class Solution
                 return o1.getName().compareTo(o2.getName());
             }
         });
-        resultFileAbsolutePath = "allFilesContent.txt";
 
-        try (FileWriter writer = new FileWriter(resultFileAbsolutePath, true))
+        File newFile = new File(resultFileAbsolutePath.getParent() + "/allFilesContent.txt");
+        resultFileAbsolutePath.renameTo(newFile);
+
+        try (FileWriter writer = new FileWriter(newFile, true))
         {
-            for (File f : files)
+            for (File f : filesLessThan50kbList)
             {
                 try (FileReader reader = new FileReader(f))
                 {
@@ -54,29 +53,42 @@ public class Solution
         {
             e.printStackTrace();
         }
+
+
+        deleteEmptyDirectories(path);
+        int x = 0;
     }
 
-    private static void addFilesLessThan50kb(File file)
+    private static void addFilesLessThan50kb(File file, List<File> list)
     {
         for (File f : file.listFiles())
         {
             if (f.isDirectory())
             {
-
-                if (f.listFiles().length == 0)
-                {
-                    f.delete();
-                } else
-                {
-                    addFilesLessThan50kb(f);
-                }
-
+                addFilesLessThan50kb(f, list);
             } else if (f.length() > 50)
             {
                 f.delete();
             } else
             {
-                filesLessThan50kbList.add(f);
+                list.add(f);
+            }
+        }
+    }
+
+    private static void deleteEmptyDirectories(File file)
+    {
+        for (File f : file.listFiles())
+        {
+            if (f.isDirectory())
+            {
+                if (f.listFiles().length == 0)
+                {
+                    f.delete();
+                } else
+                {
+                    deleteEmptyDirectories(f);
+                }
             }
         }
     }
