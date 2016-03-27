@@ -43,15 +43,6 @@ public class Solution
         ByteArrayOutputStream baos;
         int len = 0;
 
-        FileInputStream fis = new FileInputStream(fileName);
-        baos = new ByteArrayOutputStream();
-        while ((len = fis.read(buffer)) > 0)
-        {
-            baos.write(buffer, 0, len);
-        }
-        String args0FileName = "new/" + new File(fileName).getName();
-        tempZipEntries.put(args0FileName, baos.toByteArray());
-
         ZipInputStream zis = new ZipInputStream(new FileInputStream(zipName));
         ZipEntry zipEntry;
         while ((zipEntry = zis.getNextEntry()) != null)
@@ -65,6 +56,15 @@ public class Solution
             tempZipEntries.put(entryName, baos.toByteArray());
         }
         zis.close();
+
+        FileInputStream fis = new FileInputStream(fileName);
+        baos = new ByteArrayOutputStream();
+        while ((len = fis.read(buffer)) > 0)
+        {
+            baos.write(buffer, 0, len);
+        }
+        String args0FileName = "new/" + new File(fileName).getName();
+        tempZipEntries.put(args0FileName, baos.toByteArray());
 
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipName));
         for (Map.Entry<String, byte[]> entry : tempZipEntries.entrySet())
