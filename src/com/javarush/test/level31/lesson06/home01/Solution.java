@@ -63,13 +63,13 @@ public class Solution
         {
             baos.write(buffer, 0, len);
         }
-        String shortFileName = fileName.substring(fileName.lastIndexOf("/") + 1,fileName.length());
+        String shortFileName = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
         String args0FileName = "new/" + shortFileName;
         if (tempZipEntries.containsKey(shortFileName))
         {
             tempZipEntries.remove(shortFileName);
+            tempZipEntries.put(args0FileName, baos.toByteArray());
         }
-        tempZipEntries.put(args0FileName, baos.toByteArray());
 
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipName));
         for (Map.Entry<String, byte[]> entry : tempZipEntries.entrySet())
