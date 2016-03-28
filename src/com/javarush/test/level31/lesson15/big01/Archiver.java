@@ -1,11 +1,8 @@
 package com.javarush.test.level31.lesson15.big01;
 
-import com.javarush.test.level31.lesson15.big01.command.Command;
-import com.javarush.test.level31.lesson15.big01.command.ExitCommand;
+import com.javarush.test.level31.lesson15.big01.exception.WrongZipFileException;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.file.Paths;
+import java.io.IOException;
 
 /**
  * Created by
@@ -15,23 +12,33 @@ public class Archiver
 {
     public static void main(String[] args)
     {
-        try
-        {
-            System.out.println("Введите полный путь архива");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String archivePathName = reader.readLine();
-            ZipFileManager zipFileManager = new ZipFileManager(Paths.get(archivePathName));
-
-            System.out.println("Введите полный путь файла для архивации");
-            String filePathName = reader.readLine();
-            zipFileManager.createZip(Paths.get(filePathName));
-
-            Command command = new ExitCommand();
-            command.execute();
+        Operation operation = null;
+        while (true) {
+            try
+            {
+                operation = askOperation();
+                CommandExecutor.execute(operation);
+            } catch (WrongZipFileException e) {
+                ConsoleHelper.writeMessage("Вы не выбрали файл архива или выбрали неверный файл.");
+            } catch (Exception e) {
+                ConsoleHelper.writeMessage("Произошла ошибка. Проверьте введенные данные.");
+            }
+            if (Operation.EXIT.equals(operation)) {
+                break;
+            }
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+    }
+
+    public static Operation askOperation() throws IOException
+    {
+        ConsoleHelper.writeMessage("Выберите операцию:\n " +
+                Operation.CREATE.ordinal() + " - упаковать файлы в архив\n " +
+                Operation.ADD.ordinal() + " - добавить файл в архив\n " +
+                Operation.REMOVE.ordinal() + " - удалить файл из архива\n " +
+                Operation.EXTRACT.ordinal() + " - распаковать архив\n " +
+                Operation.CONTENT.ordinal() + " - просмотреть содержимое архива\n " +
+                Operation.EXIT.ordinal() + " – выход");
+        int operationOrdinal = ConsoleHelper.readInt();
+        return Operation.values()[operationOrdinal];
     }
 }
