@@ -5,13 +5,8 @@ import com.javarush.test.level31.lesson15.big01.command.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by
- * Polurival on 28.03.2016.
- */
-public class CommandExecutor
-{
-    private final static Map<Operation, Command> allKnownCommandsMap = new HashMap<>();
+public class CommandExecutor {
+    private static final Map<Operation, Command> allKnownCommandsMap = new HashMap<>();
 
     static {
         allKnownCommandsMap.put(Operation.CREATE, new ZipCreateCommand());
