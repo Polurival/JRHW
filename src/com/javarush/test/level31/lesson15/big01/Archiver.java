@@ -1,5 +1,8 @@
 package com.javarush.test.level31.lesson15.big01;
 
+import com.javarush.test.level31.lesson15.big01.command.Command;
+import com.javarush.test.level31.lesson15.big01.command.ExitCommand;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
@@ -22,6 +25,9 @@ public class Archiver
             System.out.println("Введите полный путь файла для архивации");
             String filePathName = reader.readLine();
             zipFileManager.createZip(Paths.get(filePathName));
+
+            Command command = new ExitCommand();
+            command.execute();
         }
         catch (Exception e)
         {
