@@ -1,13 +1,17 @@
 package com.javarush.test.level31.lesson15.big01;
 
 import com.javarush.test.level31.lesson15.big01.exception.PathIsNotFoundException;
+import com.javarush.test.level31.lesson15.big01.exception.WrongZipFileException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipFileManager {
@@ -68,5 +72,34 @@ public class ZipFileManager {
         while ((len = in.read(buffer)) > 0) {
             out.write(buffer, 0, len);
         }
+    }
+
+    public List<FileProperties> getFilesList() throws Exception {
+        if (!Files.isRegularFile(zipFile)) {
+            throw new WrongZipFileException();
+        }
+        List<FileProperties> filePropertiesList = new ArrayList<>();
+        try (ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(zipFile))) {
+            ZipEntry zipEntry;
+            ByteArrayOutputStream baos;
+            String name;
+            long size;
+            long compressedSize;
+            int compressionMethod;
+            FileProperties fileProperties;
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                baos = new ByteArrayOutputStream();
+                copyData(zipInputStream, baos);
+
+                name = zipEntry.getName();
+                size = baos.size();
+                compressedSize = zipEntry.getCompressedSize();
+                compressionMethod = zipEntry.getMethod();
+
+                fileProperties = new FileProperties(name, size, compressedSize, compressionMethod);
+                filePropertiesList.add(fileProperties);
+            }
+        }
+        return filePropertiesList;
     }
 }
