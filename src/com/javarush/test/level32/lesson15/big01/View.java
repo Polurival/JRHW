@@ -117,7 +117,13 @@ public class View extends JFrame implements ActionListener
 
     public void selectedTabChanged()
     {
-
+        if (isHtmlTabSelected())
+        {
+            controller.setPlainText(plainTextPane.getText());
+        } else {
+            plainTextPane.setText(controller.getPlainText());
+        }
+        resetUndo();
     }
 
     public boolean canUndo()
