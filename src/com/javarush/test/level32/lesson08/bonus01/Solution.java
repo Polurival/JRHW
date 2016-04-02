@@ -34,10 +34,10 @@ public class Solution {
         System.out.format("%b %b %b\n", isItem, isBig, isSmall);
     }
 
-    public Proxy getProxy(Class<?> item, Class<?>... items) {
+    public <T extends Item> T getProxy(Class<T> item, Class<?>... items) {
         ClassLoader classLoader = item.getClassLoader();
 
-        Class<?>[] interfaces = null;
+        Class<T>[] interfaces = null;
         if (item.getSimpleName().equals("Item")) {
             interfaces = new Class[]{item};
         } else if (item.getInterfaces() != null) {
@@ -50,15 +50,15 @@ public class Solution {
             }
         }
 
-        Class<?>[] implInterfaces = item.getInterfaces();
+        Class<T>[] implInterfaces = (Class<T>[]) item.getInterfaces();
 
-        Class<?>[] additionInterfaces = new Class[items.length];
+        Class<T>[] additionInterfaces = new Class[items.length];
         for (int i = 0; i < items.length; i++)
         {
-            additionInterfaces[i] = items[i];
+            additionInterfaces[i] = (Class<T>) items[i];
         }
 
-        Collection<Class<?>> allInterfacesCollection = new ArrayList<>();
+        Collection<Class<T>> allInterfacesCollection = new ArrayList<>();
         if (interfaces != null)
         {
             allInterfacesCollection.addAll(Arrays.asList(interfaces));
@@ -72,6 +72,6 @@ public class Solution {
         Class<?>[] allInterfaces = allInterfacesCollection.toArray(new Class[allInterfacesCollection.size()]);
 
         Object proxy = Proxy.newProxyInstance(classLoader, allInterfaces, new ItemInvocationHandler());
-        return (Proxy) proxy;
+        return (T) proxy;
     }
 }
