@@ -163,4 +163,20 @@ public class View extends JFrame implements ActionListener
     {
         return tabbedPane.getSelectedIndex() == 0;
     }
+
+    public void selectHtmlTab()
+    {
+        tabbedPane.setSelectedIndex(0);
+        resetUndo();
+    }
+
+    public void update()
+    {
+        htmlTextPane.setDocument(controller.getDocument());
+    }
+
+    public void showAbout()
+    {
+        JOptionPane.showMessageDialog(null, "Редактор HTML v.0.1", "-= HTML Editor =-", JOptionPane.INFORMATION_MESSAGE);
+    }
 }

@@ -13,6 +13,11 @@ public class Controller
     private HTMLDocument document;
     private File currentFile;
 
+    public HTMLDocument getDocument()
+    {
+        return document;
+    }
+
     public Controller(View view)
     {
         this.view = view;
