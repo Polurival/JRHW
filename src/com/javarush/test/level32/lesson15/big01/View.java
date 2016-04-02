@@ -202,6 +202,6 @@ public class View extends JFrame implements ActionListener
 
     public void showAbout()
     {
-        JOptionPane.showMessageDialog(null, "Редактор HTML v.0.1", "-= HTML Editor =-", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Редактор HTML v.0.1", "-= HTML Editor =-", JOptionPane.INFORMATION_MESSAGE);
     }
 }
