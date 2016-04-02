@@ -34,44 +34,11 @@ public class Solution {
         System.out.format("%b %b %b\n", isItem, isBig, isSmall);
     }
 
-    public <T extends Item> T getProxy(Class<T> item, Class<?>... items) {
-        ClassLoader classLoader = item.getClassLoader();
+    public <T extends Item> T getProxy(Class<T> clazz, Class ...interfaces) {
+        Class[] allInterfaces = new Class[interfaces.length + 1];
+        allInterfaces[0] = clazz;
+        System.arraycopy(interfaces, 0, allInterfaces, 1, interfaces.length);
 
-        Class<T>[] interfaces = null;
-        if (item.getSimpleName().equals("Item")) {
-            interfaces = new Class[]{item};
-        } else if (item.getInterfaces() != null) {
-            interfaces = new Class[item.getInterfaces().length];
-            for (int i = 0; i < item.getInterfaces().length; i++) {
-                if (item.getInterfaces()[i].getSimpleName().equals("Item"))
-                {
-                    interfaces[i] = item;
-                }
-            }
-        }
-
-        Class<T>[] implInterfaces = (Class<T>[]) item.getInterfaces();
-
-        Class<T>[] additionInterfaces = new Class[items.length];
-        for (int i = 0; i < items.length; i++)
-        {
-            additionInterfaces[i] = (Class<T>) items[i];
-        }
-
-        Collection<Class<T>> allInterfacesCollection = new ArrayList<>();
-        if (interfaces != null)
-        {
-            allInterfacesCollection.addAll(Arrays.asList(interfaces));
-        }
-        if (implInterfaces != null)
-        {
-            allInterfacesCollection.addAll(Arrays.asList(implInterfaces));
-        }
-        allInterfacesCollection.addAll(Arrays.asList(additionInterfaces));
-
-        Class<?>[] allInterfaces = allInterfacesCollection.toArray(new Class[allInterfacesCollection.size()]);
-
-        Object proxy = Proxy.newProxyInstance(classLoader, allInterfaces, new ItemInvocationHandler());
-        return (T) proxy;
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), allInterfaces, new ItemInvocationHandler());
     }
 }
