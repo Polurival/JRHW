@@ -3,10 +3,7 @@ package com.javarush.test.level32.lesson15.big01;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 
 /**
  * Created by
@@ -74,5 +71,20 @@ public class Controller
         {
             ExceptionHandler.log(e);
         }
+    }
+
+    public String getPlainText()
+    {
+        Writer writer = new StringWriter();
+        HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
+        try
+        {
+            htmlEditorKit.write(writer, document, 0, document.getLength());
+        }
+        catch (IOException | BadLocationException e)
+        {
+            ExceptionHandler.log(e);
+        }
+        return writer.toString();
     }
 }
