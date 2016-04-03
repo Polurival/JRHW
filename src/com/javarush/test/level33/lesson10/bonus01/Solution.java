@@ -8,9 +8,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
@@ -39,19 +36,6 @@ import java.util.regex.Pattern;
 </first>
 */
 public class Solution {
-
-    @XmlType(name = "first")
-    @XmlRootElement
-    public static class First
-    {
-        @XmlElement(name = "second")
-        public String[] needCDATA = new String[]{"some string", "some string", "need CDATA because <second>dsfdf<second/> of < and >", ""};
-    }
-
-    public static void main(String[] args)
-    {
-        System.out.println(toXmlWithComment(new First(), "second", "it's a comment"));
-    }
 
     public static String toXmlWithComment(Object obj, String tagName, String comment) {
         try
