@@ -97,12 +97,44 @@ public class Controller
 
     public void openDocument()
     {
-
+        view.selectHtmlTab();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new HTMLFileFilter());
+        int result = fileChooser.showOpenDialog(view);
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
+            currentFile = fileChooser.getSelectedFile();
+            resetDocument();
+            view.setTitle(currentFile.getName());
+            try (Reader reader = new FileReader(currentFile))
+            {
+                new HTMLEditorKit().read(reader, document, 0);
+            }
+            catch (IOException | BadLocationException e)
+            {
+                ExceptionHandler.log(e);
+            }
+            view.resetUndo();
+        }
     }
 
     public void saveDocument()
     {
-
+        if (currentFile == null)
+        {
+            saveDocumentAs();
+        } else
+        {
+            view.selectHtmlTab();
+            try (Writer writer = new FileWriter(currentFile))
+            {
+                new HTMLEditorKit().write(writer, document, 0, document.getLength());
+            }
+            catch (IOException | BadLocationException e)
+            {
+                ExceptionHandler.log(e);
+            }
+        }
     }
 
     public void saveDocumentAs()
@@ -111,7 +143,8 @@ public class Controller
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new HTMLFileFilter());
         int result = fileChooser.showSaveDialog(view);
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
             currentFile = fileChooser.getSelectedFile();
             view.setTitle(currentFile.getName());
             try (Writer writer = new FileWriter(currentFile))
