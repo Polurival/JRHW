@@ -15,8 +15,7 @@ public class OurHashMapStorageStrategy implements StorageStrategy
 
     int hash(Long k)
     {
-        int h;
-        return (k == null) ? 0 : (h = k.hashCode()) ^ (h >>> 16);
+        return k.hashCode();
     }
 
     int indexFor(int hash, int length)
@@ -26,14 +25,17 @@ public class OurHashMapStorageStrategy implements StorageStrategy
 
     Entry getEntry(Long key)
     {
-        int hash = (key == null) ? 0 : hash((long) key.hashCode());
+        if (size == 0)
+        {
+            return null;
+        }
+        int hash = (key == null) ? 0 : hash(key);
         for (Entry e = table[indexFor(hash, table.length)];
              e != null;
              e = e.next)
         {
-            Long k = null;
             if (e.hash == hash &&
-                    ((k = e.key).equals(key)) || (key != null && key.equals(k)))
+                    ((e.key).equals(key)) || (key != null && key.equals(e.key)))
             {
                 return e;
             }
@@ -60,34 +62,29 @@ public class OurHashMapStorageStrategy implements StorageStrategy
 
     void transfer(Entry[] newTable)
     {
-        Entry[] src = table;
         int newCapacity = newTable.length;
-        for (int j = 0; j < src.length; j++)
+        for (Entry e : table)
         {
-            Entry e = src[j];
-            if (e != null)
+            while (null != e)
             {
-                src[j] = null;
-                do
-                {
-                    Entry next = e.next;
-                    int i = indexFor(e.hash, newCapacity);
-                    e.next = newTable[i];
-                    newTable[i] = e;
-                    e = next;
-                }
-                while (e != null);
+                Entry next = e.next;
+                int i = indexFor(e.hash, newCapacity);
+                e.next = newTable[i];
+                newTable[i] = e;
+                e = next;
             }
         }
     }
 
     void addEntry(int hash, Long key, String value, int bucketIndex)
     {
-        createEntry(hash, key, value, bucketIndex);
-        if (size >= threshold)
+        if ((size >= threshold) && (null != table[bucketIndex]))
         {
             resize(2 * table.length);
+            hash = (null != key) ? hash(key) : 0;
+            bucketIndex = indexFor(hash, table.length);
         }
+        createEntry(hash, key, value, bucketIndex);
     }
 
     void createEntry(int hash, Long key, String value, int bucketIndex)
@@ -106,17 +103,18 @@ public class OurHashMapStorageStrategy implements StorageStrategy
     @Override
     public boolean containsValue(String value)
     {
-        Entry[] tab;
-        if ((tab = table) != null && size > 0)
+        if (value == null)
         {
-            for (int i = 0; i < tab.length; ++i)
+            return false;
+        }
+        Entry[] tab = table;
+        for (int i = 0; i < tab.length; i++)
+        {
+            for (Entry e = tab[i]; e != null; e = e.next)
             {
-                for (Entry e = tab[i]; e != null; e = e.next)
+                if (value.equals(e.value))
                 {
-                    if (value != null && value.equals(e.value))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -126,6 +124,10 @@ public class OurHashMapStorageStrategy implements StorageStrategy
     @Override
     public void put(Long key, String value)
     {
+        if (key == null)
+        {
+            return;
+        }
         int hash = hash(key);
         int i = indexFor(hash, table.length);
         for (Entry e = table[i]; e != null; e = e.next)
@@ -133,6 +135,7 @@ public class OurHashMapStorageStrategy implements StorageStrategy
             if (e.hash == hash && (e.key.equals(key)))
             {
                 e.value = value;
+                return;
             }
         }
         addEntry(hash, key, value, i);
@@ -141,11 +144,11 @@ public class OurHashMapStorageStrategy implements StorageStrategy
     @Override
     public Long getKey(String value)
     {
-        for (int i = 0; i < table.length; i++)
+        for (Entry e : table)
         {
-            if (value.equals(table[i].getValue()))
+            if ((null != e) && (e.getValue().equals(value)))
             {
-                return table[i].getKey();
+                return e.getKey();
             }
         }
         return null;
@@ -154,16 +157,6 @@ public class OurHashMapStorageStrategy implements StorageStrategy
     @Override
     public String getValue(Long key)
     {
-        int hash = hash((long) key.hashCode());
-        for (Entry e = table[indexFor(hash, table.length)];
-             e != null;
-             e = e.next)
-        {
-            if (e.hash == hash && e.key.equals(key))
-            {
-                return e.value;
-            }
-        }
-        return null;
+        return null == getEntry(key) ? null : getEntry(key).getValue();
     }
 }
