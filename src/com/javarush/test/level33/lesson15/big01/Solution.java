@@ -64,9 +64,10 @@ public class Solution
 
     public static void main(String[] args)
     {
-        testStrategy(new HashMapStorageStrategy(), 500);
-        testStrategy(new OurHashMapStorageStrategy(), 500);
-        testStrategy(new FileStorageStrategy(), 500);
-        testStrategy(new OurHashBiMapStorageStrategy(), 500);
+        testStrategy(new HashMapStorageStrategy(), 200);
+        testStrategy(new OurHashMapStorageStrategy(), 200);
+        testStrategy(new FileStorageStrategy(), 200);
+        testStrategy(new OurHashBiMapStorageStrategy(), 200);
+        testStrategy(new HashBiMapStorageStrategy(), 200);
     }
 }
