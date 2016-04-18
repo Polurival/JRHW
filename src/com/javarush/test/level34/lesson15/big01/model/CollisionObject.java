@@ -11,10 +11,12 @@ public abstract class CollisionObject extends GameObject
         super(x, y);
     }
 
-    public boolean isCollision(GameObject gameObject, Direction direction) {
+    public boolean isCollision(GameObject gameObject, Direction direction)
+    {
         int newX = this.getX();
         int newY = this.getY();
-        switch (direction) {
+        switch (direction)
+        {
             case UP:
                 newY -= Model.FIELD_SELL_SIZE;
                 break;

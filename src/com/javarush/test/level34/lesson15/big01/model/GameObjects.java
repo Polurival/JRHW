@@ -42,7 +42,8 @@ public class GameObjects
         this.player = player;
     }
 
-    public Set<GameObject> getAll() {
+    public Set<GameObject> getAll()
+    {
         Set<GameObject> allObjects = new HashSet<>();
         allObjects.addAll(this.getWalls());
         allObjects.addAll(this.getBoxes());
