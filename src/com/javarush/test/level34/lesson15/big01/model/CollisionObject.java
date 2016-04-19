@@ -13,8 +13,8 @@ public abstract class CollisionObject extends GameObject
 
     public boolean isCollision(GameObject gameObject, Direction direction)
     {
-        int newX = this.getX();
-        int newY = this.getY();
+        int newX = getX();
+        int newY = getY();
         switch (direction)
         {
             case UP:

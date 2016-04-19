@@ -18,7 +18,7 @@ public class Model
     private int currentLevel = 1;
 
     private LevelLoader levelLoader = new LevelLoader(Paths.get("./src/" +
-            this.getClass().getPackage().getName()
+            getClass().getPackage().getName()
                     .replaceAll("\\.", "/")
                     .replace("model", "res/levels.txt")));
 
@@ -29,7 +29,7 @@ public class Model
 
     public GameObjects getGameObjects()
     {
-        return this.gameObjects;
+        return gameObjects;
     }
 
     public void restartLevel(int level)

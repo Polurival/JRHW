@@ -54,8 +54,8 @@ public abstract class GameObject
     {
         this.x = x;
         this.y = y;
-        this.width = Model.FIELD_SELL_SIZE;
-        this.height = Model.FIELD_SELL_SIZE;
+        width = Model.FIELD_SELL_SIZE;
+        height = Model.FIELD_SELL_SIZE;
     }
 
     public GameObject(int x, int y, int width, int height)
