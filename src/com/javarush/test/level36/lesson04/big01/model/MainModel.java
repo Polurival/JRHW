@@ -51,6 +51,15 @@ public class MainModel implements Model
         modelData.setDisplayDeletedUserList(false);
     }
 
+    @Override
+    public void changeUserData(String name, long id, int level)
+    {
+        userService.createOrUpdateUser(name, id, level);
+        List<User> users = getAllActiveUsers();
+        modelData.setUsers(users);
+        modelData.setDisplayDeletedUserList(false);
+    }
+
     private List<User> getAllActiveUsers()
     {
         List<User> users = userService.getUsersBetweenLevels(1, 100);
