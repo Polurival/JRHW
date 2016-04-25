@@ -36,52 +36,67 @@ public class Solution
 
     public void scanFileSystem() throws ClassNotFoundException
     {
-        ClassLoader classLoader = new ClassLoader()
+        File dir = new File(packageName);
+        String[] classFiles = dir.list();
+        for (String classFile : classFiles)
         {
-            @Override
-            protected Class<?> findClass(String className) throws ClassNotFoundException
+            final String finalPath = packageName + File.separator;
+            ClassLoader loader = new ClassLoader()
             {
-                byte b[];
-                try
+                @Override
+                protected Class<?> findClass(String name) throws ClassNotFoundException
                 {
-                    b = fetchClassFromFC(packageName + className);
-                    return defineClass(null, b, 0, b.length);
+                    byte[] temp = getBytesFromFile(finalPath + name + ".class");
+                    return defineClass(null, temp, 0, temp.length);
                 }
-                catch (IOException e)
-                {
-                    return super.findClass(className);
-                }
-            }
 
-            private byte[] fetchClassFromFC(String path) throws IOException
-            {
-                long length = new File(path).length();
-                byte[] bytes = new byte[(int) length];
-
-                try (InputStream is = new FileInputStream(path))
+                private byte[] getBytesFromFile(String path)
                 {
-                    int offset = 0;
-                    int numRead;
-                    while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0)
+                    File file = new File(path);
+                    InputStream is = null;
+                    try
                     {
-                        offset += numRead;
+                        is = new FileInputStream(file);
                     }
+                    catch (FileNotFoundException e)
+                    {
+                    }
+                    // Get the size of the file
+                    long length = file.length();
+                    if (length > Integer.MAX_VALUE)
+                    {
+                        // File is too large
+                    }
+                    // Create the byte array to hold the data
+                    byte[] bytes = new byte[(int) length];
+                    // Read in the bytes
+                    int offset = 0;
+                    int numRead = 0;
+                    try
+                    {
+                        while (offset < bytes.length
+                                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0)
+                        {
+                            offset += numRead;
+                        }
+                        // Close the input stream and return bytes
+                        is.close();
+                    }
+                    catch (IOException e)
+                    {
+                    }
+                    return bytes;
                 }
-
-                return bytes;
+            };
+            String className = classFile.substring(0, classFile.length() - 6);
+            try
+            {
+                Class clazz = loader.loadClass(className);
+                hiddenClasses.add(clazz);
             }
-        };
-
-        if (!packageName.endsWith("\\"))
-        {
-            packageName += "\\";
-        }
-        String[] files = new File(packageName).list();
-
-        for (String file : files)
-        {
-            Class clazz = classLoader.loadClass(file);
-            hiddenClasses.add(clazz);
+            catch (ClassNotFoundException e)
+            {
+            }
         }
     }
 
@@ -89,18 +104,22 @@ public class Solution
     {
         for (Class clazz : hiddenClasses)
         {
-            if (clazz.getSimpleName().toLowerCase().startsWith(key))
+            if (clazz.getSimpleName().toLowerCase().startsWith(key.toLowerCase()))
             {
                 try
                 {
-                    Constructor<?> constructor = clazz.getDeclaredConstructor(new Class[0]);
-                    constructor.setAccessible(true);
-                    HiddenClass hiddenClass = (HiddenClass) constructor.newInstance();
-                    return hiddenClass;
+                    Constructor[] constructors = clazz.getDeclaredConstructors();
+                    for (Constructor constructor : constructors)
+                    {
+                        if (constructor.getParameterTypes().length == 0)
+                        {
+                            constructor.setAccessible(true);
+                            return (HiddenClass) constructor.newInstance();
+                        }
+                    }
                 }
-                catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
+                catch (InstantiationException | InvocationTargetException | IllegalAccessException e)
                 {
-                    e.printStackTrace();
                 }
             }
         }
