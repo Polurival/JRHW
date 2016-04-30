@@ -1,6 +1,7 @@
 package com.javarush.test.level39.lesson09.big01;
 
 import com.javarush.test.level39.lesson09.big01.query.DateQuery;
+import com.javarush.test.level39.lesson09.big01.query.EventQuery;
 import com.javarush.test.level39.lesson09.big01.query.IPQuery;
 import com.javarush.test.level39.lesson09.big01.query.UserQuery;
 
@@ -16,14 +17,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class LogParser implements IPQuery, UserQuery, DateQuery
+public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery
 {
 
     private Path logDir;
+    private List<String> linesList;
 
     public LogParser(Path logDir)
     {
         this.logDir = logDir;
+        linesList = getLinesList();
     }
 
     private List<String> getLinesList()
@@ -52,61 +55,63 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
         return lines;
     }
 
-    private void addEntity(Date after, Date before, Set<String> enteties, String[] parts, int part)
+    private void addStringEntity(Date after, Date before, Set<String> enteties, String[] parts, int part)
     {
-        long partDateTime = getDate(parts[2]).getTime();
+        long lineDateTime = getDate(parts[2]).getTime();
 
-        if (after == null && before == null)
+        if (isCompatibleDate(lineDateTime, after, before))
         {
-            enteties.add( parts[part]);
-        } else if (after == null)
-        {
-            if (partDateTime <= before.getTime())
-            {
-                enteties.add( parts[part]);
-            }
-        } else if (before == null)
-        {
-            if (partDateTime >= after.getTime())
-            {
-                enteties.add( parts[part]);
-            }
-        } else
-        {
-            if (partDateTime >= after.getTime() && partDateTime <= before.getTime())
-            {
-                enteties.add( parts[part]);
-            }
+            enteties.add(parts[part]);
         }
     }
 
     private void addDateEntity(Date after, Date before, Set<Date> enteties, String[] parts)
     {
-        Date partDate = getDate(parts[2]);
-        long partDateTime = getDate(parts[2]).getTime();
+        Date lineDate = getDate(parts[2]);
+        long lineDateTime = getDate(parts[2]).getTime();
 
+        if (isCompatibleDate(lineDateTime, after, before))
+        {
+            enteties.add(lineDate);
+        }
+    }
+
+    private void addEventEntity(Date after, Date before, Set<Event> enteties, String[] parts)
+    {
+        Event lineEvent = Event.valueOf(parts[3].split(" ")[0]);
+        long lineDateTime = getDate(parts[2]).getTime();
+
+        if (isCompatibleDate(lineDateTime, after, before))
+        {
+            enteties.add(lineEvent);
+        }
+    }
+
+    private boolean isCompatibleDate(long lineDateTime, Date after, Date before)
+    {
         if (after == null && before == null)
         {
-            enteties.add(partDate);
+            return true;
         } else if (after == null)
         {
-            if (partDateTime <= before.getTime())
+            if (lineDateTime <= before.getTime())
             {
-                enteties.add(partDate);
+                return true;
             }
         } else if (before == null)
         {
-            if (partDateTime >= after.getTime())
+            if (lineDateTime >= after.getTime())
             {
-                enteties.add(partDate);
+                return true;
             }
         } else
         {
-            if (partDateTime >= after.getTime() && partDateTime <= before.getTime())
+            if (lineDateTime >= after.getTime() && lineDateTime <= before.getTime())
             {
-                enteties.add(partDate);
+                return true;
             }
         }
+        return false;
     }
 
     private Date getDate(String part)
@@ -135,11 +140,11 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> uniqueIPs = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
-            addEntity(after, before, uniqueIPs, parts, 0);
+            addStringEntity(after, before, uniqueIPs, parts, 0);
         }
         return uniqueIPs;
     }
@@ -149,13 +154,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> IPsForUser = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (user.equals(parts[1]))
             {
-                addEntity(after, before, IPsForUser, parts, 0);
+                addStringEntity(after, before, IPsForUser, parts, 0);
             }
         }
         return IPsForUser;
@@ -166,13 +171,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> IPsForEvent = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (event.toString().equals(parts[3].split(" ")[0]))
             {
-                addEntity(after, before, IPsForEvent, parts, 0);
+                addStringEntity(after, before, IPsForEvent, parts, 0);
             }
         }
         return IPsForEvent;
@@ -183,13 +188,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> IPsForEvent = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (status.toString().equals(parts[4]))
             {
-                addEntity(after, before, IPsForEvent, parts, 0);
+                addStringEntity(after, before, IPsForEvent, parts, 0);
             }
         }
         return IPsForEvent;
@@ -200,7 +205,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> allUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             allUsers.add(line.split("\\t")[1]);
         }
@@ -211,10 +216,10 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     public int getNumberOfUsers(Date after, Date before)
     {
         Set<String> users = new HashSet<>();
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
-            addEntity(after, before, users, parts, 1);
+            addStringEntity(after, before, users, parts, 1);
         }
         return users.size();
     }
@@ -224,13 +229,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> userEvents = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (user.equals(parts[1]))
             {
-                addEntity(after, before, userEvents, parts, 2);
+                addStringEntity(after, before, userEvents, parts, 2);
             }
         }
         return userEvents.size();
@@ -241,13 +246,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> usersForIP = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (ip.equals(parts[0]))
             {
-                addEntity(after, before, usersForIP, parts, 1);
+                addStringEntity(after, before, usersForIP, parts, 1);
             }
         }
         return usersForIP;
@@ -258,13 +263,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> loggedUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (Event.LOGIN.toString().equals(parts[3]))
             {
-                addEntity(after, before, loggedUsers, parts, 1);
+                addStringEntity(after, before, loggedUsers, parts, 1);
             }
         }
         return loggedUsers;
@@ -275,13 +280,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> downloadedPluginUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (Event.DOWNLOAD_PLUGIN.toString().equals(parts[3]))
             {
-                addEntity(after, before, downloadedPluginUsers, parts, 1);
+                addStringEntity(after, before, downloadedPluginUsers, parts, 1);
             }
         }
         return downloadedPluginUsers;
@@ -292,13 +297,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> wroteMessageUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (Event.WRITE_MESSAGE.toString().equals(parts[3]))
             {
-                addEntity(after, before, wroteMessageUsers, parts, 1);
+                addStringEntity(after, before, wroteMessageUsers, parts, 1);
             }
         }
         return wroteMessageUsers;
@@ -309,13 +314,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> solvedTaskUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (Event.SOLVE_TASK.toString().equals(parts[3].split(" ")[0]))
             {
-                addEntity(after, before, solvedTaskUsers, parts, 1);
+                addStringEntity(after, before, solvedTaskUsers, parts, 1);
             }
         }
         return solvedTaskUsers;
@@ -326,13 +331,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> solvedTaskUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (Event.SOLVE_TASK.toString().equals(parts[3].split(" ")[0])
                     && task == Integer.valueOf(parts[3].split(" ")[1]))
             {
-                addEntity(after, before, solvedTaskUsers, parts, 1);
+                addStringEntity(after, before, solvedTaskUsers, parts, 1);
             }
         }
         return solvedTaskUsers;
@@ -343,13 +348,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> doneTaskUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
 
             if (Event.DONE_TASK.toString().equals(parts[3].split(" ")[0]))
             {
-                addEntity(after, before, doneTaskUsers, parts, 1);
+                addStringEntity(after, before, doneTaskUsers, parts, 1);
             }
         }
         return doneTaskUsers;
@@ -360,13 +365,13 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<String> doneTaskUsers = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (Event.DONE_TASK.toString().equals(parts[3].split(" ")[0])
                     && task == Integer.valueOf(parts[3].split(" ")[1]))
             {
-                addEntity(after, before, doneTaskUsers, parts, 1);
+                addStringEntity(after, before, doneTaskUsers, parts, 1);
             }
         }
         return doneTaskUsers;
@@ -377,7 +382,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<Date> datesForUserAndEvent = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (user.equals(parts[1]) && event.toString().equals(parts[3].split(" ")[0]))
@@ -393,7 +398,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<Date> datesWhenSomethingFailed = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (Status.FAILED.toString().equals(parts[4]))
@@ -409,7 +414,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<Date> datesWhenErrorHappened = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (Status.ERROR.toString().equals(parts[4]))
@@ -425,7 +430,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Date dateWhenUserLoggedFirstTime = new Date(Long.MAX_VALUE);
         boolean isDateChanged = false;
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (user.equals(parts[1]) && Event.LOGIN.toString().equals(parts[3]))
@@ -445,7 +450,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Date dateWhenUserSolvedTask = new Date(Long.MAX_VALUE);
         boolean isDateChanged = false;
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (user.equals(parts[1])
@@ -465,7 +470,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     @Override
     public Date getDateWhenUserDoneTask(String user, int task, Date after, Date before)
     {
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (user.equals(parts[1])
@@ -483,7 +488,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<Date> datesWhenUserWroteMessage = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (user.equals(parts[1]) && Event.WRITE_MESSAGE.toString().equals(parts[3]))
@@ -499,7 +504,7 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
     {
         Set<Date> datesWhenUserDownloadedPlugin = new HashSet<>();
 
-        for (String line : getLinesList())
+        for (String line : linesList)
         {
             String[] parts = line.split("\\t");
             if (user.equals(parts[1]) && Event.DOWNLOAD_PLUGIN.toString().equals(parts[3]))
@@ -508,5 +513,160 @@ public class LogParser implements IPQuery, UserQuery, DateQuery
             }
         }
         return datesWhenUserDownloadedPlugin;
+    }
+
+    @Override
+    public int getNumberOfAllEvents(Date after, Date before)
+    {
+        return getAllEvents(after, before).size();
+    }
+
+    @Override
+    public Set<Event> getAllEvents(Date after, Date before)
+    {
+        Set<Event> eventTypes = new HashSet<>();
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            addEventEntity(after, before, eventTypes, parts);
+        }
+        return eventTypes;
+    }
+
+    @Override
+    public Set<Event> getEventsForIP(String ip, Date after, Date before)
+    {
+        Set<Event> EventsForIP = new HashSet<>();
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (ip.equals(parts[0]))
+            {
+                addEventEntity(after, before, EventsForIP, parts);
+            }
+        }
+        return EventsForIP;
+    }
+
+    @Override
+    public Set<Event> getEventsForUser(String user, Date after, Date before)
+    {
+        Set<Event> EventsForUser = new HashSet<>();
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (user.equals(parts[1]))
+            {
+                addEventEntity(after, before, EventsForUser, parts);
+            }
+        }
+        return EventsForUser;
+    }
+
+    @Override
+    public Set<Event> getFailedEvents(Date after, Date before)
+    {
+        Set<Event> FailedEvents = new HashSet<>();
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (Status.FAILED.toString().equals(parts[4]))
+            {
+                addEventEntity(after, before, FailedEvents, parts);
+            }
+        }
+        return FailedEvents;
+    }
+
+    @Override
+    public Set<Event> getErrorEvents(Date after, Date before)
+    {
+        Set<Event> ErrorEvents = new HashSet<>();
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (Status.ERROR.toString().equals(parts[4]))
+            {
+                addEventEntity(after, before, ErrorEvents, parts);
+            }
+        }
+        return ErrorEvents;
+    }
+
+    @Override
+    public int getNumberOfAttemptToSolveTask(int task, Date after, Date before)
+    {
+        int numberOfAttemptToSolveTask = 0;
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (Event.SOLVE_TASK.toString().equals(parts[3].split(" ")[0])
+                    && task == Integer.valueOf(parts[3].split(" ")[1]))
+            {
+                numberOfAttemptToSolveTask++;
+            }
+        }
+        return numberOfAttemptToSolveTask;
+    }
+
+    @Override
+    public int getNumberOfSuccessfulAttemptToSolveTask(int task, Date after, Date before)
+    {
+        int numberOfSuccessfulAttemptToSolveTask = 0;
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (Event.SOLVE_TASK.toString().equals(parts[3].split(" ")[0])
+                    && task == Integer.valueOf(parts[3].split(" ")[1])
+                    && Status.OK.toString().equals(parts[4]))
+            {
+                numberOfSuccessfulAttemptToSolveTask++;
+            }
+        }
+        return numberOfSuccessfulAttemptToSolveTask;
+    }
+
+    @Override
+    public Map<Integer, Integer> getAllSolvedTasksAndTheirNumber(Date after, Date before)
+    {
+        return getTasksMap(Event.SOLVE_TASK);
+    }
+
+    @Override
+    public Map<Integer, Integer> getAllDoneTasksAndTheirNumber(Date after, Date before)
+    {
+        return getTasksMap(Event.DONE_TASK);
+    }
+
+    private Map<Integer, Integer> getTasksMap(Event event)
+    {
+        Map<Integer, Integer> allTasksAndTheirNumber = new HashMap<>();
+        int numberOfSolvedTask;
+        int value;
+
+        for (String line : linesList)
+        {
+            String[] parts = line.split("\\t");
+            if (event.toString().equals(parts[3].split(" ")[0]))
+            {
+                numberOfSolvedTask = Integer.valueOf(parts[3].split(" ")[1]);
+                if (allTasksAndTheirNumber.containsKey(numberOfSolvedTask))
+                {
+                    value = allTasksAndTheirNumber.get(numberOfSolvedTask) + 1;
+                    allTasksAndTheirNumber.put(numberOfSolvedTask, value);
+                } else
+                {
+                    allTasksAndTheirNumber.put(numberOfSolvedTask, 1);
+                }
+            }
+        }
+        return allTasksAndTheirNumber;
     }
 }

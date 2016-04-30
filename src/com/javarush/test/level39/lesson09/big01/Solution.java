@@ -6,6 +6,7 @@ import java.util.Date;
 public class Solution {
     public static void main(String[] args) {
         LogParser logParser = new LogParser(Paths.get("c:/logs/"));
+
         System.out.println(logParser.getNumberOfUniqueIPs(null, new Date()));
         System.out.println(logParser.getUniqueIPs(null, new Date()));
         System.out.println(logParser.getAllUsers());
@@ -28,5 +29,16 @@ public class Solution {
         System.out.println(logParser.getDateWhenUserDoneTask("Vasya Pupkin", 15, null, null));
         System.out.println(logParser.getDatesWhenUserWroteMessage("Vasya Pupkin", null, null));
         System.out.println(logParser.getDatesWhenUserDownloadedPlugin("Eduard Petrovich Morozko", null, null));
+        System.out.println("*****");
+        System.out.println(logParser.getNumberOfAllEvents(null, null));
+        System.out.println(logParser.getAllEvents(null, null));
+        System.out.println(logParser.getEventsForIP("192.168.100.2", null, null));
+        System.out.println(logParser.getEventsForUser("Vasya Pupkin", null, null));
+        System.out.println(logParser.getFailedEvents(null, null));
+        System.out.println(logParser.getErrorEvents(null, null));
+        System.out.println(logParser.getNumberOfAttemptToSolveTask(18, null, null));
+        System.out.println(logParser.getNumberOfSuccessfulAttemptToSolveTask(18, null, null));
+        System.out.println(logParser.getAllSolvedTasksAndTheirNumber(null, null));
+        System.out.println(logParser.getAllDoneTasksAndTheirNumber(null, null));
     }
 }
