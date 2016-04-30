@@ -13,6 +13,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQuery
 {
@@ -672,37 +674,54 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
     {
         String field1 = "";
         String field2 = "";
-        String value = "";
+        String value1 = "";
+        String value2 = "";
+        String value3 = "";
+
+        List<String> values = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\"[\\w \\.:]+\"");
+        Matcher matcher = pattern.matcher(query);
+        while (matcher.find())
+        {
+            values.add(matcher.group().replace("\"", ""));
+        }
+
         if (query.split(" ").length > 2)
         {
             field1 = query.split(" ")[1];
             field2 = query.split(" ")[3];
-            value = query.split(" = ")[1].replace("\"", "");
+            value1 = values.get(0);
+            if (values.size() > 1)
+            {
+                value2 = values.get(1);
+                value3 = values.get(2);
+            }
         }
 
         Set<Object> querySet = new HashSet<>();
         for (String line : linesList)
         {
-            if (query.split(" ").length == 2)
+            String[] lineParts = line.split("\\t");
+            if (values.size() == 0)
             {
                 switch (query)
                 {
                     case "get ip":
-                        querySet.add(line.split("\\t")[0]);
+                        querySet.add(lineParts[0]);
                         break;
                     case "get user":
-                        querySet.add(line.split("\\t")[1]);
+                        querySet.add(lineParts[1]);
                         break;
                     case "get date":
-                        Date date = getDate(line.split("\\t")[2]);
+                        Date date = getDate(lineParts[2]);
                         querySet.add(date);
                         break;
                     case "get event":
-                        Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
+                        Event event = Event.valueOf(lineParts[3].split(" ")[0]);
                         querySet.add(event);
                         break;
                     case "get status":
-                        Status status = Status.valueOf(line.split("\\t")[4]);
+                        Status status = Status.valueOf(lineParts[4]);
                         querySet.add(status);
                         break;
                 }
@@ -717,15 +736,35 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                             case "user":
                             case "date":
                             case "status":
-                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                if (value1.equals(lineParts[getField2Index(field2)]))
                                 {
-                                    querySet.add(line.split("\\t")[0]);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            querySet.add(lineParts[0]);
+                                        }
+                                    } else
+                                    {
+                                        querySet.add(lineParts[0]);
+                                    }
                                 }
                                 break;
                             case "event":
-                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                if (value1.equals(lineParts[3].split(" ")[0]))
                                 {
-                                    querySet.add(line.split("\\t")[0]);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            querySet.add(lineParts[0]);
+                                        }
+                                    } else
+                                    {
+                                        querySet.add(lineParts[0]);
+                                    }
                                 }
                                 break;
                         }
@@ -737,15 +776,35 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                             case "user":
                             case "date":
                             case "status":
-                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                if (value1.equals(lineParts[getField2Index(field2)]))
                                 {
-                                    querySet.add(line.split("\\t")[1]);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            querySet.add(lineParts[1]);
+                                        }
+                                    } else
+                                    {
+                                        querySet.add(lineParts[1]);
+                                    }
                                 }
                                 break;
                             case "event":
-                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                if (value1.equals(lineParts[3].split(" ")[0]))
                                 {
-                                    querySet.add(line.split("\\t")[1]);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            querySet.add(lineParts[1]);
+                                        }
+                                    } else
+                                    {
+                                        querySet.add(lineParts[1]);
+                                    }
                                 }
                                 break;
                         }
@@ -757,17 +816,39 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                             case "user":
                             case "date":
                             case "status":
-                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                if (value1.equals(lineParts[getField2Index(field2)]))
                                 {
-                                    Date date = getDate(line.split("\\t")[2]);
-                                    querySet.add(date);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            date = getDate(lineParts[2]);
+                                            querySet.add(date);
+                                        }
+                                    } else
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        querySet.add(date);
+                                    }
                                 }
                                 break;
                             case "event":
-                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                if (value1.equals(lineParts[3].split(" ")[0]))
                                 {
-                                    Date date = getDate(line.split("\\t")[2]);
-                                    querySet.add(date);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            date = getDate(lineParts[2]);
+                                            querySet.add(date);
+                                        }
+                                    } else
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        querySet.add(date);
+                                    }
                                 }
                                 break;
                         }
@@ -779,17 +860,39 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                             case "user":
                             case "date":
                             case "status":
-                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                if (value1.equals(lineParts[getField2Index(field2)]))
                                 {
-                                    Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
-                                    querySet.add(event);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            Event event = Event.valueOf(lineParts[3].split(" ")[0]);
+                                            querySet.add(event);
+                                        }
+                                    } else
+                                    {
+                                        Event event = Event.valueOf(lineParts[3].split(" ")[0]);
+                                        querySet.add(event);
+                                    }
                                 }
                                 break;
                             case "event":
-                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                if (value1.equals(lineParts[3].split(" ")[0]))
                                 {
-                                    Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
-                                    querySet.add(event);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            Event event = Event.valueOf(lineParts[3].split(" ")[0]);
+                                            querySet.add(event);
+                                        }
+                                    } else
+                                    {
+                                        Event event = Event.valueOf(lineParts[3].split(" ")[0]);
+                                        querySet.add(event);
+                                    }
                                 }
                                 break;
                         }
@@ -801,17 +904,39 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
                             case "user":
                             case "date":
                             case "status":
-                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                if (value1.equals(lineParts[getField2Index(field2)]))
                                 {
-                                    Status status = Status.valueOf(line.split("\\t")[4]);
-                                    querySet.add(status);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            Status status = Status.valueOf(lineParts[4]);
+                                            querySet.add(status);
+                                        }
+                                    } else
+                                    {
+                                        Status status = Status.valueOf(lineParts[4]);
+                                        querySet.add(status);
+                                    }
                                 }
                                 break;
                             case "event":
-                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                if (value1.equals(lineParts[3].split(" ")[0]))
                                 {
-                                    Status status = Status.valueOf(line.split("\\t")[4]);
-                                    querySet.add(status);
+                                    if (values.size() == 3)
+                                    {
+                                        Date date = getDate(lineParts[2]);
+                                        if (isCompatibleDate(date.getTime(), getDate(value2), getDate(value3)))
+                                        {
+                                            Status status = Status.valueOf(lineParts[4]);
+                                            querySet.add(status);
+                                        }
+                                    } else
+                                    {
+                                        Status status = Status.valueOf(lineParts[4]);
+                                        querySet.add(status);
+                                    }
                                 }
                                 break;
                         }
