@@ -670,31 +670,173 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQ
     @Override
     public Set<Object> execute(String query)
     {
+        String field1 = "";
+        String field2 = "";
+        String value = "";
+        if (query.split(" ").length > 2)
+        {
+            field1 = query.split(" ")[1];
+            field2 = query.split(" ")[3];
+            value = query.split(" = ")[1].replace("\"", "");
+        }
+
         Set<Object> querySet = new HashSet<>();
         for (String line : linesList)
         {
-            switch (query)
+            if (query.split(" ").length == 2)
             {
-                case "get ip":
-                    querySet.add(line.split("\\t")[0]);
-                    break;
-                case "get user":
-                    querySet.add(line.split("\\t")[1]);
-                    break;
-                case "get date":
-                    Date date = getDate(line.split("\\t")[2]);
-                    querySet.add(date);
-                    break;
-                case "get event":
-                    Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
-                    querySet.add(event);
-                    break;
-                case "get status":
-                    Status status = Status.valueOf(line.split("\\t")[4]);
-                    querySet.add(status);
-                    break;
+                switch (query)
+                {
+                    case "get ip":
+                        querySet.add(line.split("\\t")[0]);
+                        break;
+                    case "get user":
+                        querySet.add(line.split("\\t")[1]);
+                        break;
+                    case "get date":
+                        Date date = getDate(line.split("\\t")[2]);
+                        querySet.add(date);
+                        break;
+                    case "get event":
+                        Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
+                        querySet.add(event);
+                        break;
+                    case "get status":
+                        Status status = Status.valueOf(line.split("\\t")[4]);
+                        querySet.add(status);
+                        break;
+                }
+            } else
+            {
+                switch (field1)
+                {
+                    case "ip":
+                        switch (field2)
+                        {
+                            case "ip":
+                            case "user":
+                            case "date":
+                            case "status":
+                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                {
+                                    querySet.add(line.split("\\t")[0]);
+                                }
+                                break;
+                            case "event":
+                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                {
+                                    querySet.add(line.split("\\t")[0]);
+                                }
+                                break;
+                        }
+                        break;
+                    case "user":
+                        switch (field2)
+                        {
+                            case "ip":
+                            case "user":
+                            case "date":
+                            case "status":
+                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                {
+                                    querySet.add(line.split("\\t")[1]);
+                                }
+                                break;
+                            case "event":
+                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                {
+                                    querySet.add(line.split("\\t")[1]);
+                                }
+                                break;
+                        }
+                        break;
+                    case "date":
+                        switch (field2)
+                        {
+                            case "ip":
+                            case "user":
+                            case "date":
+                            case "status":
+                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                {
+                                    Date date = getDate(line.split("\\t")[2]);
+                                    querySet.add(date);
+                                }
+                                break;
+                            case "event":
+                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                {
+                                    Date date = getDate(line.split("\\t")[2]);
+                                    querySet.add(date);
+                                }
+                                break;
+                        }
+                        break;
+                    case "event":
+                        switch (field2)
+                        {
+                            case "ip":
+                            case "user":
+                            case "date":
+                            case "status":
+                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                {
+                                    Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
+                                    querySet.add(event);
+                                }
+                                break;
+                            case "event":
+                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                {
+                                    Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
+                                    querySet.add(event);
+                                }
+                                break;
+                        }
+                        break;
+                    case "status":
+                        switch (field2)
+                        {
+                            case "ip":
+                            case "user":
+                            case "date":
+                            case "status":
+                                if (value.equals(line.split("\\t")[getField2Index(field2)]))
+                                {
+                                    Status status = Status.valueOf(line.split("\\t")[4]);
+                                    querySet.add(status);
+                                }
+                                break;
+                            case "event":
+                                if (value.equals(line.split("\\t")[3].split(" ")[0]))
+                                {
+                                    Status status = Status.valueOf(line.split("\\t")[4]);
+                                    querySet.add(status);
+                                }
+                                break;
+                        }
+                        break;
+                }
             }
         }
         return querySet;
+    }
+
+    private int getField2Index(String field2)
+    {
+        switch (field2)
+        {
+            case "ip":
+                return 0;
+            case "user":
+                return 1;
+            case "date":
+                return 2;
+            case "event":
+                return 3;
+            case "status":
+                return 4;
+        }
+        return -1;
     }
 }

@@ -20,7 +20,7 @@ public class Solution {
         System.out.println(logParser.getSolvedTaskUsers(null, null, 18));
         System.out.println(logParser.getDoneTaskUsers(null, null));
         System.out.println(logParser.getDoneTaskUsers(null, null, 15));
-        System.out.println("*****");
+        System.out.println("task 3:");
         System.out.println(logParser.getDatesForUserAndEvent("Amigo", Event.DONE_TASK, null, null));
         System.out.println(logParser.getDatesWhenSomethingFailed(null, null));
         System.out.println(logParser.getDatesWhenErrorHappened(null, null));
@@ -29,7 +29,7 @@ public class Solution {
         System.out.println(logParser.getDateWhenUserDoneTask("Vasya Pupkin", 15, null, null));
         System.out.println(logParser.getDatesWhenUserWroteMessage("Vasya Pupkin", null, null));
         System.out.println(logParser.getDatesWhenUserDownloadedPlugin("Eduard Petrovich Morozko", null, null));
-        System.out.println("*****");
+        System.out.println("task 4:");
         System.out.println(logParser.getNumberOfAllEvents(null, null));
         System.out.println(logParser.getAllEvents(null, null));
         System.out.println(logParser.getEventsForIP("192.168.100.2", null, null));
@@ -40,11 +40,13 @@ public class Solution {
         System.out.println(logParser.getNumberOfSuccessfulAttemptToSolveTask(18, null, null));
         System.out.println(logParser.getAllSolvedTasksAndTheirNumber(null, null));
         System.out.println(logParser.getAllDoneTasksAndTheirNumber(null, null));
-        System.out.println("*****");
+        System.out.println("task 5:");
         System.out.println(logParser.execute("get ip"));
         System.out.println(logParser.execute("get user"));
         System.out.println(logParser.execute("get date"));
         System.out.println(logParser.execute("get event"));
         System.out.println(logParser.execute("get status"));
+        System.out.println("task 6:");
+        System.out.println(logParser.execute("get event for date = \"30.01.2014 12:56:22\""));
     }
 }
