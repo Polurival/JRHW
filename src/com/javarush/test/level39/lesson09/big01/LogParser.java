@@ -1,9 +1,6 @@
 package com.javarush.test.level39.lesson09.big01;
 
-import com.javarush.test.level39.lesson09.big01.query.DateQuery;
-import com.javarush.test.level39.lesson09.big01.query.EventQuery;
-import com.javarush.test.level39.lesson09.big01.query.IPQuery;
-import com.javarush.test.level39.lesson09.big01.query.UserQuery;
+import com.javarush.test.level39.lesson09.big01.query.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -17,7 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery
+public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery, QLQuery
 {
 
     private Path logDir;
@@ -668,5 +665,36 @@ public class LogParser implements IPQuery, UserQuery, DateQuery, EventQuery
             }
         }
         return allTasksAndTheirNumber;
+    }
+
+    @Override
+    public Set<Object> execute(String query)
+    {
+        Set<Object> querySet = new HashSet<>();
+        for (String line : linesList)
+        {
+            switch (query)
+            {
+                case "get ip":
+                    querySet.add(line.split("\\t")[0]);
+                    break;
+                case "get user":
+                    querySet.add(line.split("\\t")[1]);
+                    break;
+                case "get date":
+                    Date date = getDate(line.split("\\t")[2]);
+                    querySet.add(date);
+                    break;
+                case "get event":
+                    Event event = Event.valueOf(line.split("\\t")[3].split(" ")[0]);
+                    querySet.add(event);
+                    break;
+                case "get status":
+                    Status status = Status.valueOf(line.split("\\t")[4]);
+                    querySet.add(status);
+                    break;
+            }
+        }
+        return querySet;
     }
 }

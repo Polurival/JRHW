@@ -40,5 +40,11 @@ public class Solution {
         System.out.println(logParser.getNumberOfSuccessfulAttemptToSolveTask(18, null, null));
         System.out.println(logParser.getAllSolvedTasksAndTheirNumber(null, null));
         System.out.println(logParser.getAllDoneTasksAndTheirNumber(null, null));
+        System.out.println("*****");
+        System.out.println(logParser.execute("get ip"));
+        System.out.println(logParser.execute("get user"));
+        System.out.println(logParser.execute("get date"));
+        System.out.println(logParser.execute("get event"));
+        System.out.println(logParser.execute("get status"));
     }
 }
