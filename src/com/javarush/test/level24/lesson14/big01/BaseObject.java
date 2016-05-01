@@ -4,7 +4,7 @@ package com.javarush.test.level24.lesson14.big01;
  * Created by
  * Polurival on 01.05.2016.
  */
-public class BaseObject
+public abstract class BaseObject
 {
     private double x;
     private double y;
@@ -45,5 +45,14 @@ public class BaseObject
     public void setRadius(double radius)
     {
         this.radius = radius;
+    }
+
+    public abstract void draw();
+
+    public abstract void move();
+
+    public boolean isIntersec(BaseObject o)
+    {
+        return this.radius + o.radius < Math.max(this.radius, o.radius);
     }
 }
