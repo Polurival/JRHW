@@ -2,6 +2,7 @@ package com.javarush.test.level24.lesson14.big01;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Главный класс игры
@@ -170,6 +171,18 @@ public class Arcanoid
      */
     public void checkBricksBump()
     {
+        Iterator bricksIterator = bricks.iterator();
+        while (bricksIterator.hasNext())
+        {
+            Brick brick = (Brick) bricksIterator.next();
+            if (ball.isIntersec(brick))
+            {
+                double angel = Math.random() * 360;
+                ball.setDirection(angel);
+                bricks.remove(brick);
+                break;
+            }
+        }
         //Тут проверь - столкнулся ли шарик с кирпичем.
         //Если да - кирпичь удалить, а шарик запустить в случайно направлении.
     }
@@ -180,6 +193,11 @@ public class Arcanoid
      */
     public void checkStandBump()
     {
+        if (ball.isIntersec(stand))
+        {
+            double angel = 80 + Math.random()*20;
+            ball.setDirection(angel);
+        }
         //Тут проверь - столкнулся ли шарик с подставкой.
         //Если да - запустить шарик  вверх на 80..100 градусов.
     }
@@ -190,6 +208,10 @@ public class Arcanoid
      */
     public void checkEndGame()
     {
+        if (ball.getY() > height)
+        {
+            isGameOver = true;
+        }
         //Если шарик улетел за нижнюю границы - игра окончена.
     }
 
