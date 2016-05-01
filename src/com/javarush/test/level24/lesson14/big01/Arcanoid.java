@@ -8,6 +8,8 @@ import java.util.ArrayList;
  */
 public class Arcanoid
 {
+    public static Arcanoid game;
+
     private int width;
     private int height;
 
@@ -22,6 +24,16 @@ public class Arcanoid
     }
 
     public static void main(String[] args)
+    {
+
+    }
+
+    public void run()
+    {
+
+    }
+
+    public void move()
     {
 
     }
