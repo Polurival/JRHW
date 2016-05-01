@@ -12,11 +12,11 @@ public class Snake
     //Состояние - жива змея или нет.
     private boolean isAlive;
     //Список кусочков змеи.
-    private ArrayList<SnakeSection> sections = new ArrayList<SnakeSection>();
+    private ArrayList<SnakeSection> sections = new ArrayList<>();
 
     public Snake(int x, int y)
     {
-        sections = new ArrayList<SnakeSection>();
+        sections = new ArrayList<>();
         sections.add(new SnakeSection(x, y));
         isAlive = true;
     }
@@ -76,10 +76,32 @@ public class Snake
     private void move(int dx, int dy)
     {
         //Создаем новую голову - новый "кусочек змеи".
+        SnakeSection head = sections.get(0);
+        head = new SnakeSection(head.getX() + dx, head.getY() + dy);
         //Проверяем - не вылезла ли голова за границу комнаты
+        checkBorders(head);
+        if (!isAlive)
+        {
+            return;
+        }
         //Проверяем - не пересекает ли змея  саму себя
+        checkBody(head);
+        if (!isAlive)
+        {
+            return;
+        }
         //Проверяем - не съела ли змея мышь.
+        Mouse mouse = Room.game.getMouse();
+        if (head.getX() == mouse.getX() && head.getY() == mouse.getY())
+        {
+            Room.game.eatMouse();
+        } else
+        {
+            sections.remove(sections.size() - 1);
+        }
+
         //Двигаем змею.
+        sections.add(0, head);
     }
 
     /**
@@ -87,6 +109,11 @@ public class Snake
      */
     private void checkBorders(SnakeSection head)
     {
+        if (head.getX() < 0 || head.getX() >= Room.game.getWidth()
+                || head.getY() < 0 || head.getY() >= Room.game.getHeight())
+        {
+            isAlive = false;
+        }
     }
 
     /**
@@ -94,5 +121,9 @@ public class Snake
      */
     private void checkBody(SnakeSection head)
     {
+        if (sections.contains(head))
+        {
+            isAlive = false;
+        }
     }
 }
