@@ -12,11 +12,11 @@ public class Snake
     //Состояние - жива змея или нет.
     private boolean isAlive;
     //Список кусочков змеи.
-    private ArrayList<SnakeSection> sections = new ArrayList<>();
+    private ArrayList<SnakeSection> sections = new ArrayList<SnakeSection>();
 
     public Snake(int x, int y)
     {
-        sections = new ArrayList<>();
+        sections = new ArrayList<SnakeSection>();
         sections.add(new SnakeSection(x, y));
         isAlive = true;
     }
@@ -78,30 +78,27 @@ public class Snake
         //Создаем новую голову - новый "кусочек змеи".
         SnakeSection head = sections.get(0);
         head = new SnakeSection(head.getX() + dx, head.getY() + dy);
+
         //Проверяем - не вылезла ли голова за границу комнаты
         checkBorders(head);
-        if (!isAlive)
-        {
-            return;
-        }
+        if (!isAlive) return;
+
         //Проверяем - не пересекает ли змея  саму себя
         checkBody(head);
-        if (!isAlive)
-        {
-            return;
-        }
+        if (!isAlive) return;
+
         //Проверяем - не съела ли змея мышь.
         Mouse mouse = Room.game.getMouse();
-        if (head.getX() == mouse.getX() && head.getY() == mouse.getY())
+        if (head.getX() == mouse.getX() && head.getY() == mouse.getY()) //съела
         {
-            Room.game.eatMouse();
-        } else
-        {
-            sections.remove(sections.size() - 1);
+            sections.add(0, head);                  //Добавили новую голову
+            Room.game.eatMouse();                   //Хвот не удаляем, но создаем новую мышь.
         }
-
-        //Двигаем змею.
-        sections.add(0, head);
+        else //просто движется
+        {
+            sections.add(0, head);                  //добавили новую голову
+            sections.remove(sections.size() - 1);   //удалили последний элемент с хвоста
+        }
     }
 
     /**
@@ -109,8 +106,7 @@ public class Snake
      */
     private void checkBorders(SnakeSection head)
     {
-        if (head.getX() < 0 || head.getX() >= Room.game.getWidth()
-                || head.getY() < 0 || head.getY() >= Room.game.getHeight())
+        if ((head.getX() < 0 || head.getX() >= Room.game.getWidth()) || head.getY() < 0 || head.getY() >= Room.game.getHeight())
         {
             isAlive = false;
         }
