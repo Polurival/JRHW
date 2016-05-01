@@ -66,4 +66,17 @@ public class Ball extends BaseObject
     {
         isFrozen = false;
     }
+
+    public void setDirection(double direction)
+    {
+        this.direction = direction;
+        double angel = Math.toRadians(direction);
+        dx = Math.cos(angel) * speed;
+        dy = -Math.sin(angel) * speed;
+    }
+
+    public void checkRebound(int minx, int maxx, int miny, int maxy)
+    {
+
+    }
 }
