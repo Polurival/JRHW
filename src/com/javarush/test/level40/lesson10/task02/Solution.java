@@ -41,7 +41,7 @@ AM или PM: 1
 Секунды: 40
 */
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -59,7 +59,7 @@ public class Solution
     public static void printDate(String date)
     {
         //напишите тут ваш код
-        LocalDateTime localDateTime;
+        DateTime dateTime;
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
         DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("dd.MM.yyyy");
@@ -71,10 +71,10 @@ public class Solution
 
         if (dateArr.length == 2)
         {
-            localDateTime = dateTimeFormatter.parseLocalDateTime(date);
+            dateTime = dateTimeFormatter.parseDateTime(date);
 
-            showDateInfo(localDateTime);
-            showTimeInfo(localDateTime);
+            showDateInfo(dateTime);
+            showTimeInfo(dateTime);
 
         } else
         {
@@ -84,38 +84,49 @@ public class Solution
 
             if (yearMonthDay.length == 3)
             {
-                localDateTime = dateFormatter.parseLocalDateTime(date);
-                showDateInfo(localDateTime);
+                dateTime = dateFormatter.parseDateTime(date);
+                showDateInfo(dateTime);
 
             } else if (hourMinuteSecond.length == 3)
             {
-                localDateTime = timeFormatter.parseLocalDateTime(date);
-                showTimeInfo(localDateTime);
+                dateTime = timeFormatter.parseDateTime(date);
+                showTimeInfo(dateTime);
             }
         }
     }
 
-    private static void showTimeInfo(LocalDateTime localDateTime)
+    private static void showTimeInfo(DateTime dateTime)
     {
-        System.out.println("AM или PM: " + (localDateTime.getHourOfDay() > 11 ? 1 : 0));
-        System.out.println("Часы: " +
-                (localDateTime.getHourOfDay() > 11 ?
-                        localDateTime.getHourOfDay() - 12 : localDateTime.getHourOfDay()));
-        System.out.println("Часы дня: " + localDateTime.getHourOfDay());
-        System.out.println("Минуты: " + localDateTime.getMinuteOfHour());
-        System.out.println("Секунды: " + localDateTime.getSecondOfMinute());
+        System.out.println("AM или PM: " + (dateTime.getHourOfDay() > 11 ? 1 : 0));
+        System.out.println("Часы: " + (dateTime.getHourOfDay() % 12));
+        System.out.println("Часы дня: " + dateTime.getHourOfDay());
+        System.out.println("Минуты: " + dateTime.getMinuteOfHour());
+        System.out.println("Секунды: " + dateTime.getSecondOfMinute());
     }
 
-    private static void showDateInfo(LocalDateTime localDateTime)
+    private static void showDateInfo(DateTime dateTime)
     {
-        System.out.println("День: " + localDateTime.getDayOfMonth());
-        System.out.println("День недели: " + (localDateTime.getDayOfWeek() + 1));
-        System.out.println("День месяца: " + localDateTime.getDayOfMonth());
-        System.out.println("День года: " + localDateTime.getDayOfYear());
-        System.out.println("Неделя месяца: " + (localDateTime.getDayOfMonth() / 7 + 1));
-        System.out.println("Неделя года: " + localDateTime.getWeekOfWeekyear());
-        System.out.println("Месяц: " + (localDateTime.getMonthOfYear() - 1));
-        System.out.println("Год: " + localDateTime.getYear());
-        System.out.println("Эра: " + localDateTime.getEra());
+        System.out.println("День: " + dateTime.getDayOfMonth());
+        System.out.println("День недели: " + (dateTime.getDayOfWeek() + 1));
+        System.out.println("День месяца: " + dateTime.getDayOfMonth());
+        System.out.println("День года: " + dateTime.getDayOfYear());
+
+        DateTime minYearDate = dateTime.dayOfYear().withMinimumValue();
+        DateTime minMonthDate = dateTime.dayOfMonth().withMinimumValue();
+        int weekDis = (minYearDate.getWeekyear() == dateTime.getYear()) ? 0 : 1;
+        int weekOfYear = dateTime.getWeekOfWeekyear() + weekDis;
+        if (weekOfYear >= 53)
+            weekOfYear = 1;
+        int weekOfMonth = dateTime.getWeekOfWeekyear() - minMonthDate.getWeekOfWeekyear() + 1;
+        if (minMonthDate.getWeekOfWeekyear() >= dateTime.getWeekOfWeekyear())
+            weekOfMonth = dateTime.minusDays(7).getWeekOfWeekyear() - minMonthDate.getWeekOfWeekyear() + 2;
+        if (dateTime.getMonthOfYear() == 1)
+            weekOfMonth = weekOfYear;
+
+        System.out.println("Неделя месяца: " + weekOfMonth);
+        System.out.println("Неделя года: " + weekOfYear);
+        System.out.println("Месяц: " + (dateTime.getMonthOfYear() - 1));
+        System.out.println("Год: " + dateTime.getYear());
+        System.out.println("Эра: " + dateTime.getEra());
     }
 }
